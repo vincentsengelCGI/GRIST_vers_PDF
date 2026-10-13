@@ -278,13 +278,13 @@ async function executerExtraction() {
 
         const actions = [];
 
-        for (const pagePko of pagesPko) {
+        for (const page of pagesPko) {
 
             actions.push([
                 "AddRecord",
                 "PKO_Pages",
                 null,
-                pagePko.toString()
+                page
             ]);
 
         }
