@@ -252,7 +252,25 @@ async function executerExtraction() {
 
         valeurs[NOM_COLONNE_TEXTE] = texteComplet;
 
-        console.log("Valeurs à écrire :", valeurs);
+		pyodide.globals.set(
+			    "texte_pdf",
+			    texteComplet
+			);
+			
+			const agents =
+				await pyodide.runPythonAsync(`
+					import re
+					texte = texte_pdf
+					return_value = len(
+					    texte.split("--- Page")
+					)
+					return_value
+				`);
+				
+			console.log(
+				"Nombre trouvé :",
+				agents
+			);
 
         await grist.docApi.applyUserActions([
             [
