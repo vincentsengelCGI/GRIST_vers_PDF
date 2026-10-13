@@ -46,10 +46,11 @@
         }
 
         function initialiserWidget() {
-            initPyodide();
-            testPython();
 
             console.log("Initialisation widget");
+
+                await initPyodide();
+            await testPython();
 
             statusDiv.innerText = "Connexion à Grist...";
 
