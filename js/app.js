@@ -270,23 +270,20 @@ async function executerExtraction() {
         const tableId =
             await grist.getSelectedTableId();
 
-
+ */
         // -----------------------------------------------------
         // Ecriture des pages agent dans la page agent
         // -----------------------------------------------------
 
         const actions = [];
 
-        for (const texteAgent of agents) {
+        for (const pagePko of pagesPko) {
 
             actions.push([
                 "AddRecord",
-                "Agents",
+                "PKO_Pages",
                 null,
-                {
-                    texte_PKO: texteAgent,
-                    PKO_iD: id_PKO
-                }
+                pagePko
             ]);
 
         }
@@ -294,7 +291,7 @@ async function executerExtraction() {
         await grist.docApi.applyUserActions(
             actions
         );
- */
+
         statusDiv.innerText =
             "Extraction terminée";
 
