@@ -142,10 +142,7 @@ async function testPython() {
 async function executerExtraction() {
 
     console.log("=== EXTRACTION DEMARREE ===");
-
-
-    await testPython();
-
+	
     try {
 
         console.log("Attachment ID :", currentAttachmentId);
