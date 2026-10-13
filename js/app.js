@@ -119,12 +119,18 @@ async function initPyodide() {
 }
 
 async function testPython() {
-    const resultat = await pyodide.runPythonAsync(`
-			a = 2
-			b = 3
-			a + b
-		`);
-    console.log("Résultat Python :", resultat);
+	const texte = "bonjour depuis javascript";
+	
+	pyodide.globals.set(
+	    "texte_recu",
+	    texte
+	);
+	
+	const resultat = await pyodide.runPythonAsync(`
+		texte_recu.upper()
+	`);
+	
+	console.log(resultat);
 }
 
 // -----------------------------------------------------
