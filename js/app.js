@@ -27,11 +27,13 @@ let id_PKO = null;
 // Widget
 // -----------------------------------------------------
 
-function initialiserWidget() {
+async function initialiserWidget() {
 
     console.log("Initialisation widget");
-
-    statusDiv.innerText = "Connexion à Grist...";
+	statusDiv.innerText = "Initialisation Python...";
+    await initPyodide();
+    
+	statusDiv.innerText = "Connexion à Grist...";
 
     if (typeof grist === "undefined") {
         statusDiv.innerText = "API Grist introuvable";
@@ -141,7 +143,7 @@ async function executerExtraction() {
 
     console.log("=== EXTRACTION DEMARREE ===");
 
-    await initPyodide();
+
     await testPython();
 
     try {
