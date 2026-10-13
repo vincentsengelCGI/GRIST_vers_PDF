@@ -121,14 +121,14 @@
                 console.log("Pyodide prêt");
         }
 
-        async function testPython() {
-                const resultat = await pyodide.runPythonAsync(`
-                a = 2
-                b = 3
-                a + b
-                `);
-            console.log("Résultat Python :", resultat);
-        }
+	async function testPython() {
+		const resultat = await pyodide.runPythonAsync(`
+			a = 2
+			b = 3
+			a + b
+		`);
+		console.log("Résultat Python :", resultat);
+	}
 
         // -----------------------------------------------------
         // Extraction
