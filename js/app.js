@@ -27,24 +27,6 @@
         // Widget
         // -----------------------------------------------------
 
-        async function initPyodide() {
-            console.log("Chargement de Pyodide...");
-            pyodide = await loadPyodide();
-            console.log("Pyodide prêt");
-        }
-
-        async function testPython() {
-
-            const resultat = await pyodide.runPythonAsync(`
-        a = 2
-        b = 3
-        a + b
-        `);
-
-            console.log("Résultat Python :", resultat);
-        
-        }
-
         function initialiserWidget() {
 
             console.log("Initialisation widget");
@@ -127,6 +109,25 @@
                 }
 
             });
+        }
+
+        // -----------------------------------------------------
+        // Pyodide
+        // -----------------------------------------------------
+
+        async function initPyodide() {
+                console.log("Chargement de Pyodide...");
+                pyodide = await loadPyodide();
+                console.log("Pyodide prêt");
+        }
+
+        async function testPython() {
+                const resultat = await pyodide.runPythonAsync(`
+                a = 2
+                b = 3
+                a + b
+                `);
+            console.log("Résultat Python :", resultat);
         }
 
         // -----------------------------------------------------
