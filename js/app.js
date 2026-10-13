@@ -284,7 +284,7 @@ async function executerExtraction() {
                 "AddRecord",
                 "PKO_Pages",
                 null,
-                str(pagePko)
+                pagePko.toString()
             ]);
 
         }
