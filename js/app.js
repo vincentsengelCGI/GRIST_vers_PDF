@@ -283,7 +283,11 @@ async function executerExtraction() {
                 "AddRecord",
                 "PKO_Pages",
                 null,
-                pagePko
+                {
+                    PKO_id: pagePko.PKO_id,
+                    contenu_pagepko: pagePko.contenu_pagepko,
+                    numero_page_pko: pagePko.numero_page_pko
+                }
             ]);
 
         }
