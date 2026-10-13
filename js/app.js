@@ -32,6 +32,7 @@ async function initialiserWidget() {
     console.log("Initialisation widget");
 	statusDiv.innerText = "Initialisation Python...";
     await initPyodide();
+    await chargerParser()
     
 	statusDiv.innerText = "Connexion à Grist...";
 
@@ -108,6 +109,30 @@ async function initialiserWidget() {
         }
 
     });
+}
+
+// -----------------------------------------------------
+// parser python
+// -----------------------------------------------------
+
+
+async function chargerParser() {
+
+    const response = await fetch(
+        "python/parser.py"
+    );
+
+    const codePython =
+        await response.text();
+
+    await pyodide.runPythonAsync(
+        codePython
+    );
+
+    console.log(
+        "Parser Python chargé"
+    );
+
 }
 
 // -----------------------------------------------------
@@ -249,34 +274,24 @@ async function executerExtraction() {
 
         valeurs[NOM_COLONNE_TEXTE] = texteComplet;
 
-		pyodide.globals.set(
-			    "texte_pdf",
-			    texteComplet
-			);
-			
-			const agents_lecture =
-				await pyodide.runPythonAsync(`
-					import re
-					texte = texte_pdf
-					return_value = len(
-					    texte.split("--- Page")
-					)
-					return_value
-				`);
-				
-			console.log(
-				"Nombre trouvé :",
-				agents_lecture
-			);
+        pyodide.globals.set(
+            "texte_pdf",
+            texteComplet
+        );
 
-        await grist.docApi.applyUserActions([
-            [
-                "UpdateRecord",
-                tableId,
-                currentRecordId,
-                valeurs
-            ]
-        ]);
+        const nombreAgents =
+        await pyodide.runPythonAsync(`
+
+        compter_agents(
+            texte_pdf
+        )
+
+        `);
+
+        console.log(">>>>> test python");
+        console.log(
+            nombreAgents
+        );
 
         // -----------------------------------------------------
         // Ecriture des pages agent dans la page agent
