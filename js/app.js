@@ -7,14 +7,6 @@
         const NOM_COLONNE_ID = "PKO_ID";
 
         let pyodide = null;
-        
-        async function initPyodide() {
-            console.log("Chargement de Pyodide...");
-            pyodide = await loadPyodide();
-            console.log("Pyodide prêt");
-        }
-
-initPyodide();
 
         pdfjsLib.GlobalWorkerOptions.workerSrc =
             "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
@@ -35,8 +27,14 @@ initPyodide();
         // Widget
         // -----------------------------------------------------
 
-        function initialiserWidget() {
+        async function initPyodide() {
+            console.log("Chargement de Pyodide...");
+            pyodide = await loadPyodide();
+            console.log("Pyodide prêt");
+        }
 
+        function initialiserWidget() {
+            initPyodide();
             console.log("Initialisation widget");
 
             statusDiv.innerText = "Connexion à Grist...";
