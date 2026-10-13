@@ -6,7 +6,15 @@
         const NOM_COLONNE_TEXTE = "contenu_pdf";
         const NOM_COLONNE_ID = "PKO_ID";
 
+        let pyodide = null;
+        
+        async function initPyodide() {
+            console.log("Chargement de Pyodide...");
+            pyodide = await loadPyodide();
+            console.log("Pyodide prêt");
+        }
 
+initPyodide();
 
         pdfjsLib.GlobalWorkerOptions.workerSrc =
             "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
