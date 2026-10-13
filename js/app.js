@@ -201,8 +201,13 @@ async function executerExtraction() {
             const textContent =
                 await page.getTextContent();
 
+            const textePage =
+                textContent.items
+                    .map(item => item.str)
+                    .join(" ");
+
             agents.push(
-                textContent.trim()
+                textePage.trim()
             );
 
         }
