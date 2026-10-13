@@ -1,1 +1,33 @@
+        body {
+            font-family: Arial, sans-serif;
+            padding: 12px;
+            margin: 0;
+            background: #f9f9f9;
+        }
 
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        button {
+            background: #11b076;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .status {
+            background: #eeeeee;
+            padding: 8px;
+            border-left: 4px solid #11b076;
+            border-radius: 4px;
+        }
