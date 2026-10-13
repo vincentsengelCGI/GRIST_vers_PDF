@@ -32,7 +32,7 @@
             console.log("Initialisation widget");
 
                 await initPyodide();
-            await testPython();
+                await testPython();
 
             statusDiv.innerText = "Connexion à Grist...";
 
