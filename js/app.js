@@ -212,6 +212,8 @@ async function executerExtraction() {
 
         }
 
+        console.log("Test Python >>>>>>>>>>>");
+        console.log(id_PKO);
 
         pyodide.globals.set(
             "pko_id",
@@ -236,7 +238,7 @@ async function executerExtraction() {
         `);
 
         console.log(pagesPko);
-
+        console.log("Fin");
 
 
         // -----------------------------------------------------
