@@ -33,8 +33,22 @@
             console.log("Pyodide prêt");
         }
 
+        async function testPython() {
+
+            const resultat = await pyodide.runPythonAsync(`
+        a = 2
+        b = 3
+        a + b
+        `);
+
+            console.log("Résultat Python :", resultat);
+        
+        }
+
         function initialiserWidget() {
             initPyodide();
+            testPython();
+
             console.log("Initialisation widget");
 
             statusDiv.innerText = "Connexion à Grist...";
