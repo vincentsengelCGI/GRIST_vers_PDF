@@ -275,6 +275,7 @@ async function executerExtraction() {
         // Ecriture des pages agent dans la page agent
         // -----------------------------------------------------
 
+
         const actions = [];
 
         for (const pagePko of pagesPko) {
@@ -283,11 +284,7 @@ async function executerExtraction() {
                 "AddRecord",
                 "PKO_Pages",
                 null,
-                {
-                    PKO_id: pagePko.PKO_id,
-                    contenu_pagepko: pagePko.contenu_pagepko,
-                    numero_page_pko: pagePko.numero_page_pko
-                }
+                str(pagePko)
             ]);
 
         }
