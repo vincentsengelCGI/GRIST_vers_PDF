@@ -4,7 +4,7 @@
 
 const NOM_COLONNE_PJ = "A_FichierSource";
 const NOM_COLONNE_TEXTE = "contenu_pdf";
-const NOM_COLONNE_ID = "PKO_ID";
+const NOM_COLONNE_ID = "id";
 
 let pyodide = null;
 
