@@ -1,9 +1,26 @@
-# python/parser.py
+# parser.py
 
-import re
+def construire_pages_pko(pko_id, pages):
 
-def compter_agents(texte):
+    resultat = []
 
-    return texte.count(
-        "PAIGKM"
-    )
+    for numero_page, contenu in enumerate(
+        pages,
+        start=1
+    ):
+
+        resultat.append({
+            "PKO_id": pko_id,
+            "numero_page_pko": numero_page,
+            "contenu_pagepko": contenu
+        })
+
+    return resultat
+
+
+def construire_agents(pages):
+    pass
+
+
+def construire_indus(agent):
+    pass

@@ -145,21 +145,6 @@ async function initPyodide() {
     console.log("Pyodide prêt");
 }
 
-async function testPython() {
-	const texte = "bonjour depuis javascript";
-	
-	pyodide.globals.set(
-	    "texte_recu",
-	    texte
-	);
-	
-	const resultat = await pyodide.runPythonAsync(`
-		texte_recu.upper()
-	`);
-	
-	console.log(resultat);
-}
-
 // -----------------------------------------------------
 // Extraction
 // -----------------------------------------------------
@@ -199,48 +184,60 @@ async function executerExtraction() {
             await loadingTask.promise;
 
         console.log("Pages :", pdf.numPages);
-        console.log(">>> 01");
+
         const agents = [];
 
         let texteAgentCourant = "";
 
+
+        // -----------------------------------------------------
+        // Découpage du pdf en pages agent
+        // -----------------------------------------------------
+
         for (let i = 1; i <= pdf.numPages; i++) {
-            console.log(">>> 02");
-            console.log(i);
 
             const page = await pdf.getPage(i);
 
             const textContent =
                 await page.getTextContent();
 
-            const textePage =
-                textContent.items
-                    .map(item => item.str)
-                    .join(" ");
-
-            texteAgentCourant +=
-                `--- Page ${i} ---\n${textePage}\n\n`;
-
-            const finAgent =
-                /REF\s+ETAT\s*:\s*PKO\s+TOTAL\s+UP\s+PAIGKM/i
-                    .test(textePage);
-
-            console.log(finAgent);
-            if (finAgent) {
-
-                agents.push(
-                    texteAgentCourant.trim()
-                );
-
-                texteAgentCourant = "";
-            }
+            agents.push(
+                textContent.trim()
+            );
 
         }
+
+
+        pyodide.globals.set(
+            "pko_id",
+            id_PKO
+        );
+
+        pyodide.globals.set(
+            "pdf_pages",
+            agents
+        );
+
+        const pagesPko =
+            await pyodide.runPythonAsync(`
+
+            import json
+
+            construire_pages_pko(
+                pko_id,
+                pdf_pages
+            )
+
+        `);
+
+        console.log(pagesPko);
+
+
 
         // -----------------------------------------------------
         // Ecriture de tout le texte dans la ligne PKO
         // -----------------------------------------------------
-        let texteComplet = "";
+        /* let texteComplet = "";
 
         for (let i = 1; i <= pdf.numPages; i++) {
 
@@ -266,32 +263,6 @@ async function executerExtraction() {
         const tableId =
             await grist.getSelectedTableId();
 
-        console.log("Table :", tableId);
-        console.log(">>> 05");
-        console.log(">>> 05");
-
-        const valeurs = {};
-
-        valeurs[NOM_COLONNE_TEXTE] = texteComplet;
-
-        pyodide.globals.set(
-            "texte_pdf",
-            texteComplet
-        );
-
-        const nombreAgents =
-        await pyodide.runPythonAsync(`
-
-        compter_agents(
-            texte_pdf
-        )
-
-        `);
-
-        console.log(">>>>> test python");
-        console.log(
-            nombreAgents
-        );
 
         // -----------------------------------------------------
         // Ecriture des pages agent dans la page agent
@@ -316,7 +287,7 @@ async function executerExtraction() {
         await grist.docApi.applyUserActions(
             actions
         );
-
+ */
         statusDiv.innerText =
             "Extraction terminée";
 
