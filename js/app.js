@@ -225,17 +225,16 @@ async function executerExtraction() {
             agents
         );
 
-        const pagesPko =
+        const pagesJson =
             await pyodide.runPythonAsync(`
-
-            import json
-
-            construire_pages_pko(
-                pko_id,
-                pdf_pages
-            )
-
+        construire_pages_pko(
+            pko_id,
+            pdf_pages
+        )
         `);
+
+        const pagesPko =
+            JSON.parse(pagesJson);
 
         console.log(pagesPko);
         console.log("Fin");

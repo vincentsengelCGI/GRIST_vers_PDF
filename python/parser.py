@@ -15,7 +15,7 @@ def construire_pages_pko(pko_id, pages):
             "contenu_pagepko": contenu
         })
 
-    return resultat
+    return json.dumps(resultat)
 
 
 def construire_agents(pages):
