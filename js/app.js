@@ -257,7 +257,7 @@ async function executerExtraction() {
 			    texteComplet
 			);
 			
-			const agents =
+			const agents_lecture =
 				await pyodide.runPythonAsync(`
 					import re
 					texte = texte_pdf
@@ -269,7 +269,7 @@ async function executerExtraction() {
 				
 			console.log(
 				"Nombre trouvé :",
-				agents
+				agents_lecture
 			);
 
         await grist.docApi.applyUserActions([
