@@ -358,6 +358,12 @@ async function executerExtraction() {
         // Ecriture des pages agent dans la page agent
         // -----------------------------------------------------
 
+        const table_existante =
+            await lireTable("agents");
+
+        conole.log("table existante >>>>>>>");
+        console.log(table_existante);
+        
         statusDiv.innerText =
             "XXX création des lignes agents...";
 
@@ -367,7 +373,7 @@ async function executerExtraction() {
             console.log(ligne_agent);
             actions_lignes_agents.push([
                 "AddRecord",
-                TABLE_AGENTS,
+                "agents",
                 null,
                 ligne_agent
             ]);
