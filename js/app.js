@@ -365,6 +365,28 @@ async function executerExtraction() {
        console.log("agents à créer >>>>>>>>");
        console.log(agents_a_creer);
 
+
+        // -----------------------------------------------------
+        // Ecriture des pages agent dans la page agent
+        // -----------------------------------------------------
+
+        const actions_linges_agents = [];
+
+        for (const ligne_agent of agents_a_creer) {
+
+            actions.push([
+                "AddRecord",
+                TABLE_AGENTS,
+                null,
+                ligne_agent
+            ]);
+
+        }
+
+        await grist.docApi.applyUserActions(
+            actions_linges_agents
+        );
+
     }
         // -----------------------------------------------------
         // Gestion des erreurs

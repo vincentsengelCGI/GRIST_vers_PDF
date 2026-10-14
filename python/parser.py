@@ -23,12 +23,9 @@ def construire_agents(pagesPko):
 
     agents = {}
     for page in pagesPko:
-        print(page["id"])
 
         numero_agent = page["numero_enregistrement"]
-        print(f"numero_agent: {numero_agent}")
         if numero_agent not in agents:
-            print(f"Creating entry for agent: {numero_agent}")
             agents[numero_agent] = []
 
         agents[numero_agent].append(
