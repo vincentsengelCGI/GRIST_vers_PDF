@@ -249,12 +249,7 @@ async function executerExtraction() {
         const pdf =
             await loadingTask.promise;
 
-        console.log("Pages :", pdf.numPages);
-
         const agents = [];
-
-        let texteAgentCourant = "";
-
 
         // -----------------------------------------------------
         // Découpage du pdf en pages agent
@@ -299,9 +294,6 @@ async function executerExtraction() {
         const pagesPko =
             JSON.parse(pagesJson);
 
-        console.log(pagesPko);
-        console.log("Fin");
-
         // -----------------------------------------------------
         // Ecriture des pages agent dans la page agent
         // -----------------------------------------------------
@@ -318,6 +310,8 @@ async function executerExtraction() {
             ]);
 
         }
+        console.log("action pages pko >>>>>>>");
+        console.log(actions);
 
         await grist.docApi.applyUserActions(
             actions
@@ -333,8 +327,6 @@ async function executerExtraction() {
         const pages =
             await lireTable(TABLE_PKO_PAGES);
 
-        console.log(pages);
-
         const pagesDuPko =
             pages.filter(
                 p => p.PKO_id === currentRecordId
@@ -346,28 +338,21 @@ async function executerExtraction() {
         // -----------------------------------------------------
         // construction liste des agents
         // -----------------------------------------------------
-        console.log(pagesDuPko);
 
-        console.log("A");
         pyodide.globals.set(
             "pages_Du_Pko",
             pagesDuPko
         );
 
-        console.log("B");
         const agents_JSON =
            await pyodide.runPythonAsync(`
             construire_agents(
                 pages_Du_Pko.to_py()
             )
        `);
-            console.log("C");
+
         const agents_a_creer =
             JSON.parse(agents_JSON);
-
-       console.log("agents à créer >>>>>>>>");
-       console.log(agents_a_creer);
-
 
         // -----------------------------------------------------
         // Ecriture des pages agent dans la page agent
@@ -379,7 +364,7 @@ async function executerExtraction() {
         const actions_lignes_agents = [];
 
         for (const ligne_agent of agents_a_creer) {
-            console.log(ligne_agent);
+
             actions_lignes_agents.push([
                 "AddRecord",
                 TABLE_AGENTS,
@@ -389,6 +374,7 @@ async function executerExtraction() {
 
         }
 
+        console.log("action agents >>>>>>>");
         console.log(actions_lignes_agents);
 
         await grist.docApi.applyUserActions(
