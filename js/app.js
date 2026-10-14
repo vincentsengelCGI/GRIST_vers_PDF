@@ -360,10 +360,10 @@ async function executerExtraction() {
        `);
             console.log("C");
         const agents_a_creer =
-        JSON.parse(agents_JSON);
+            JSON.parse(agents_JSON);
 
        console.log("agents à créer >>>>>>>>");
-       console.log(agents_JSON);
+       console.log(agents_a_creer);
 
     }
         // -----------------------------------------------------
