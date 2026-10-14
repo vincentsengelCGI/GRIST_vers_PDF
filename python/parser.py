@@ -19,8 +19,32 @@ def construire_pages_pko(pko_id, pages):
     return json.dumps(resultat)
 
 
-def construire_agents(pages):
-    pass
+def construire_agents(pagesDuPko):
+
+    agents = {}
+
+    for page in pagesDuPko:
+
+        numero_agent = page["numero_agent"]
+
+        if numero_agent not in agents:
+
+            agents[numero_agent] = []
+
+        agents[numero_agent].append(
+            page["id"]
+        )
+
+    resultat = []
+
+    for numero_agent, pages_ID in agents.items():
+
+        resultat.append({
+            "PAGE_PKO_ID": pages_ID,
+        })
+
+    return resultat
+
 
 
 def construire_indus(agent):

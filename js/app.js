@@ -178,6 +178,40 @@ function tableToRecords(tableData) {
 }
 
 // -----------------------------------------------------
+// helper lecture des tables
+// -----------------------------------------------------
+
+async function lireTable(tableName) {
+
+    const tableData =
+        await grist.docApi.fetchTable(
+            tableName
+        );
+
+    const lignes = [];
+
+    const colonnes =
+        Object.keys(tableData);
+
+    const nbLignes =
+        tableData.id.length;
+
+    for (let i = 0; i < nbLignes; i++) {
+
+        const ligne = {};
+
+        for (const colonne of colonnes) {
+
+            ligne[colonne] =
+                tableData[colonne][i];
+        }
+
+        lignes.push(ligne);
+    }
+
+    return lignes;
+}
+// -----------------------------------------------------
 // Extraction
 // -----------------------------------------------------
 
@@ -296,15 +330,37 @@ async function executerExtraction() {
         // récupération des données des pages pko extraites
         // -----------------------------------------------------
 
-        const rawPages =
-            await grist.docApi.fetchTable(
-                TABLE_PKO_PAGES  
-            );
-
         const pages =
-            tableToRecords(rawPages);
+            await lireTable(TABLE_PKO_PAGES);
 
         console.log(pages);
+
+        const pagesDuPko =
+            pages.filter(
+                p => p.PKO_id === currentRecordId
+            );
+
+        // -----------------------------------------------------
+        // construction liste des agents
+        // -----------------------------------------------------
+
+        pyodide.globals.set(
+            "pagesDuPko",
+            pagesDuPko
+        );
+
+        const agents_JSON =
+           await pyodide.runPythonAsync(`
+       construire_agents(
+           pagesDuPkos
+       )
+       `);
+       
+       const agents_a_creer =
+       JSON.parse(agents_JSON);
+
+       console.log("agents à créer >>>>>>>>");
+       console.log(agents_a_creer);
 
     }
         // -----------------------------------------------------
