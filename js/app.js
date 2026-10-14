@@ -369,7 +369,7 @@ async function executerExtraction() {
         console.log(table_existante);
 
         statusDiv.innerText =
-            "XXX création des lignes agents...";
+            "création des lignes agents...";
 
         const actions_lignes_agents = [];
 
