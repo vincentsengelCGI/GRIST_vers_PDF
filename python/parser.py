@@ -38,8 +38,7 @@ def construire_agents(pagesPko):
     for numero_agent, pages_ID in agents.items():
 
         resultat.append({
-            "PAGE_PKO_ID": pages_ID,
-
+            "PAGE_PKO_ID": pages_ID
         })
 
     return json.dumps(resultat)
