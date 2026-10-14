@@ -355,7 +355,7 @@ async function executerExtraction() {
         const agents_JSON =
            await pyodide.runPythonAsync(`
             construire_agents(
-                pages_Du_Pko
+                pages_Du_Pko.to_py()
             )
        `);
             console.log("C");
