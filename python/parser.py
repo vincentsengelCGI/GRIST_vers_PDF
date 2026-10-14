@@ -25,7 +25,7 @@ def construire_agents(pagesDuPko):
 
     for page in pagesDuPko:
 
-        numero_agent = page["numero_agent"]
+        numero_agent = page["numero_enregistrement_agent"]
 
         if numero_agent not in agents:
 
@@ -37,7 +37,7 @@ def construire_agents(pagesDuPko):
 
     resultat = []
 
-    for numero_agent, pages_ID in agents.items():
+    for pages_ID in agents.items():
 
         resultat.append({
             "PAGE_PKO_ID": pages_ID
