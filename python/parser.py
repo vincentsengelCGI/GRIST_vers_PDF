@@ -43,8 +43,7 @@ def construire_agents(pagesDuPko):
             "PAGE_PKO_ID": pages_ID,
         })
 
-    return resultat
-
+    return json.dumps(resultat)
 
 
 def construire_indus(agent):
