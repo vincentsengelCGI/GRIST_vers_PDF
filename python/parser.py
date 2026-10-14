@@ -23,7 +23,8 @@ def construire_agents(pagesPko):
 
     agents = {}
     for page in pagesPko:
-        numero_agent = page["numero_enregistrement"]
+        print(json.dumps(page, indent=2))
+"""        numero_agent = page["numero_enregistrement"]
         print(f"numero_agent: {numero_agent}")
         if numero_agent not in agents:
             print(f"Creating entry for agent: {numero_agent}")
@@ -31,7 +32,7 @@ def construire_agents(pagesPko):
 
         agents[numero_agent].append(
             page["numero_enregistrement"]
-        )
+        ) 
 
 
     resultat = []
@@ -40,7 +41,7 @@ def construire_agents(pagesPko):
 
         resultat.append({
             "PAGE_PKO_ID": pages_ID
-        })
+        })"""
 
     return None
 #    return json.dumps(resultat)
