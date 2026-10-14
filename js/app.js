@@ -361,9 +361,9 @@ async function executerExtraction() {
         console.log(
             await grist.docApi.listTables()
         );
-        
+
         const table_existante =
-            await lireTable("agents");
+            await lireTable("Agents");
 
         conole.log("table existante >>>>>>>");
         console.log(table_existante);
@@ -377,7 +377,7 @@ async function executerExtraction() {
             console.log(ligne_agent);
             actions_lignes_agents.push([
                 "AddRecord",
-                "agents",
+                "Agents",
                 null,
                 ligne_agent
             ]);
