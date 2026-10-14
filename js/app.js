@@ -343,19 +343,19 @@ async function executerExtraction() {
         // -----------------------------------------------------
         // construction liste des agents
         // -----------------------------------------------------
-
+        console.log("A");
         pyodide.globals.set(
             "pagesDuPko",
             pagesDuPko
         );
-
+        console.log("B");
         const agents_JSON =
            await pyodide.runPythonAsync(`
        construire_agents(
            pagesDuPko
        )
        `);
-       
+            console.log("C");
        const agents_a_creer =
        JSON.parse(agents_JSON);
 
