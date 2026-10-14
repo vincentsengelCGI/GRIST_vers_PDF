@@ -301,7 +301,7 @@ async function executerExtraction() {
         const actions = [];
 
         for (const page of pagesPko) {
-
+            console.log(page);
             actions.push([
                 "AddRecord",
                 TABLE_PKO_PAGES,
@@ -364,7 +364,7 @@ async function executerExtraction() {
         const actions_lignes_agents = [];
 
         for (const ligne_agent of agents_a_creer) {
-
+            console.log(ligne_agent);
             actions_lignes_agents.push([
                 "AddRecord",
                 TABLE_AGENTS,
