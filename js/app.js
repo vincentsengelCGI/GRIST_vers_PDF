@@ -358,7 +358,7 @@ async function executerExtraction() {
                 pages_Du_Pko
             )
        `);
-            console.log("CC");
+            console.log("C");
         const agents_a_creer =
             JSON.parse(agents_JSON);
 
