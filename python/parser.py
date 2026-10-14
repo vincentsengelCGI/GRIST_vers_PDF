@@ -19,14 +19,14 @@ def construire_pages_pko(pko_id, pages):
     return json.dumps(resultat)
 
 
-def construire_agents(pagesDuPko):
+def construire_agents(pagesPko):
 
-    agents = []
+    #agents = []
 
-    for page in pagesDuPko:
-        agents.append(page["numero_enregistrement_agent"])
+    #for page in pagesDuPko:
+   #     agents.append(page["numero_enregistrement_agent"])
 
-    return agents
+    return pagesPko
 
 #        numero_agent = page["numero_enregistrement_agent"]
 

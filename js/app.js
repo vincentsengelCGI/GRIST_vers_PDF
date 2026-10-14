@@ -347,7 +347,7 @@ async function executerExtraction() {
 
         console.log("A");
         pyodide.globals.set(
-            "pagesDuPko",
+            "pages_Du_Pko",
             pagesDuPko
         );
 
@@ -355,7 +355,7 @@ async function executerExtraction() {
         const agents_JSON =
            await pyodide.runPythonAsync(`
             construire_agents(
-                pagesDuPko
+                pages_Du_Pko
             )
        `);
             console.log("C");
