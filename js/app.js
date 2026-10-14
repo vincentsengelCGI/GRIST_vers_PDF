@@ -354,16 +354,20 @@ async function executerExtraction() {
         const agents_a_creer =
             JSON.parse(agents_JSON);
         console.log("fin ecrire agent python <<<<<<<<<<<");
+
         // -----------------------------------------------------
         // Ecriture des pages agent dans la page agent
         // -----------------------------------------------------
-
+        console.log(
+            await grist.docApi.listTables()
+        );
+        
         const table_existante =
             await lireTable("agents");
 
         conole.log("table existante >>>>>>>");
         console.log(table_existante);
-        
+
         statusDiv.innerText =
             "XXX création des lignes agents...";
 
