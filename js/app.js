@@ -365,7 +365,7 @@ async function executerExtraction() {
         const table_existante =
             await lireTable("Agents");
 
-        conole.log("table existante >>>>>>>");
+        console.log("table existante >>>>>>>");
         console.log(table_existante);
 
         statusDiv.innerText =
