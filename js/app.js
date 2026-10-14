@@ -343,6 +343,8 @@ async function executerExtraction() {
         // -----------------------------------------------------
         // construction liste des agents
         // -----------------------------------------------------
+        console.log(pagesDuPko);
+
         console.log("A");
         pyodide.globals.set(
             "pagesDuPko",

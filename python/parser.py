@@ -37,15 +37,15 @@ def construire_agents(pagesDuPko):
 
     resultat = []
 
-    for numero_agent, pages_ID in agents.items():
+#    for numero_agent, pages_ID in agents.items():
+#
+#        resultat.append({
+#            "PAGE_PKO_ID": pages_ID,
+#            "numero_enregistrement_agent": numero_agent
+#        })
 
-        resultat.append({
-            "PAGE_PKO_ID": pages_ID,
-            "numero_enregistrement_agent": numero_agent
-        })
-
-    return json.dumps(resultat)
-
+#    return json.dumps(resultat)
+    return agents
 
 def construire_indus(agent):
     pass
