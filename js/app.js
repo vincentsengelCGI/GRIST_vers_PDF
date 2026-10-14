@@ -338,7 +338,7 @@ async function executerExtraction() {
         // -----------------------------------------------------
         // construction liste des agents
         // -----------------------------------------------------
-
+        console.log("construire agent python >>>>>>>");
         pyodide.globals.set(
             "pages_Du_Pko",
             pagesDuPko
@@ -353,7 +353,7 @@ async function executerExtraction() {
 
         const agents_a_creer =
             JSON.parse(agents_JSON);
-
+        console.log("fin ecrire agent python <<<<<<<<<<<");
         // -----------------------------------------------------
         // Ecriture des pages agent dans la page agent
         // -----------------------------------------------------

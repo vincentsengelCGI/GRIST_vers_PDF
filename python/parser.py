@@ -35,7 +35,7 @@ def construire_agents(pagesPko):
     resultat = []
 
     for pages_ID in agents:
-
+        print(f"pages_ID: {pages_ID}, agents[pages_ID]: {agents[pages_ID]}")
         resultat.append({
             "PAGE_PKO_ID": "[1, 2]"#"PAGE_PKO_ID": agents[pages_ID]
     })
