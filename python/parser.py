@@ -23,7 +23,7 @@ def construire_agents(pagesPko):
 
     agents = {}
     for page in pagesPko:
-        print(json.dumps(page, indent=2))
+        print("chien chat poulet")
 
     return None
 
