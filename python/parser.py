@@ -32,10 +32,9 @@ def construire_agents(pagesPko):
             page["id"]
         ) 
 
-
     resultat = []
 
-    for numero_agent, pages_ID in agents.items():
+    for pages_ID in agents:
 
         resultat.append({
             "PAGE_PKO_ID": pages_ID
