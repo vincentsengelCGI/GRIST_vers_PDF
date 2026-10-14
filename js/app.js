@@ -351,14 +351,6 @@ async function executerExtraction() {
             pagesDuPko
         );
 
-/*         const pagesJson =
-            await pyodide.runPythonAsync(`
-            construire_pages_pko(
-                pko_id,
-                pdf_pages
-            )
-        `); */
-
         console.log("B");
         const agents_JSON =
            await pyodide.runPythonAsync(`
@@ -366,7 +358,7 @@ async function executerExtraction() {
                 pagesDuPko
             )
        `);
-            console.log("C");
+            console.log("CCC");
         const agents_a_creer =
         JSON.parse(agents_JSON);
 

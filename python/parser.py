@@ -21,21 +21,24 @@ def construire_pages_pko(pko_id, pages):
 
 def construire_agents(pagesDuPko):
 
-    agents = {}
+    agents = []
 
     for page in pagesDuPko:
+        agents.append({
+            "PAGE_PKO_ID": page["id"],
+            "numero_enregistrement_agent": page["numero_enregistrement_agent"]
+        })
+#        numero_agent = page["numero_enregistrement_agent"]
 
-        numero_agent = page["numero_enregistrement_agent"]
+#       if numero_agent not in agents:
 
-        if numero_agent not in agents:
+#            agents[numero_agent] = []
 
-            agents[numero_agent] = []
+#        agents[numero_agent].append(
+#            page["id"]
+#        )
 
-        agents[numero_agent].append(
-            page["id"]
-        )
-
-    resultat = []
+#    resultat = []
 
 #    for numero_agent, pages_ID in agents.items():
 #
