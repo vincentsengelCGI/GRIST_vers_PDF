@@ -21,17 +21,19 @@ def construire_pages_pko(pko_id, pages):
 
 def construire_agents(pagesPko):
 
-    agents = []
+    agents = {}
     for page in pagesPko:
 
         numero_agent = page["numero_enregistrement"]
+        print(f"numero_agent: {numero_agent}")
         if numero_agent not in agents:
             
             agents[numero_agent] = []
 
-    agents[numero_agent].append(
-        page["id"]
-    )
+        agents[numero_agent].append(
+            page["id"]
+        )
+        print(f"page id : {page['id']}")
 
     resultat = []
 
