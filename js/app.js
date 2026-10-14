@@ -364,7 +364,7 @@ async function executerExtraction() {
                 pagesDuPko
             )
        `);
-            console.log("C-C");
+            console.log("C");
         const agents_a_creer =
         JSON.parse(agents_JSON);
 
