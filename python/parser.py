@@ -23,7 +23,7 @@ def construire_agents(pagesPko):
 
     agents = {}
     for page in pagesPko:
-        print(page)
+        print(page["id"])
 
     return None
 
