@@ -324,7 +324,7 @@ async function executerExtraction() {
         );
 
         statusDiv.innerText =
-            "Extraction terminée";
+            "Extraction PKO terminée";
 
         // -----------------------------------------------------
         // récupération des données des pages pko extraites
@@ -339,6 +339,9 @@ async function executerExtraction() {
             pages.filter(
                 p => p.PKO_id === currentRecordId
             );
+
+        statusDiv.innerText =
+            "lecture des données agents...";
 
         // -----------------------------------------------------
         // construction liste des agents
@@ -370,11 +373,14 @@ async function executerExtraction() {
         // Ecriture des pages agent dans la page agent
         // -----------------------------------------------------
 
-        const actions_linges_agents = [];
+        statusDiv.innerText =
+            "création des lignes agents...";
+
+        const actions_lignes_agents = [];
 
         for (const ligne_agent of agents_a_creer) {
-
-            actions.push([
+            console.log(ligne_agent);
+            actions_lignes_agents.push([
                 "AddRecord",
                 TABLE_AGENTS,
                 null,
@@ -383,9 +389,14 @@ async function executerExtraction() {
 
         }
 
+        console.log(actions_lignes_agents);
+
         await grist.docApi.applyUserActions(
-            actions_linges_agents
+            actions_lignes_agents
         );
+
+        statusDiv.innerText =
+            "lignes agents créés";
 
     }
         // -----------------------------------------------------
