@@ -2,9 +2,12 @@
 // Configuration
 // -----------------------------------------------------
 
-const NOM_COLONNE_PJ = "A_FichierSource";
-const NOM_COLONNE_TEXTE = "contenu_pdf";
-const NOM_COLONNE_ID = "id";
+const PKO_NOM_COLONNE_PJ = "A_FichierSource";
+const PKO_NOM_COLONNE_ID = "id";
+
+const TABLE_AGENTS = "agents";
+const TABLE_PKO = "PKO";
+const TABLE_PKO_PAGES = "PKO_Pages";
 
 let pyodide = null;
 
@@ -60,8 +63,8 @@ async function initialiserWidget() {
 
         currentRecordId = record.id;
 
-        const attachment = record[NOM_COLONNE_PJ];
-        id_PKO = record[NOM_COLONNE_ID];
+        const attachment = record[PKO_NOM_COLONNE_PJ];
+        id_PKO = record[PKO_NOM_COLONNE_ID];
 
         console.log("Champ PJ :", attachment);
 
@@ -146,6 +149,35 @@ async function initPyodide() {
 }
 
 // -----------------------------------------------------
+// conversion table grist colonne -> lignes
+// -----------------------------------------------------
+
+function tableToRecords(tableData) {
+
+    const rows = [];
+
+    const rowCount =
+        tableData.id.length;
+
+    const columns =
+        Object.keys(tableData);
+
+    for (let i = 0; i < rowCount; i++) {
+
+        const row = {};
+
+        for (const column of columns) {
+            row[column] =
+                tableData[column][i];
+        }
+
+        rows.push(row);
+    }
+
+    return rows;
+}
+
+// -----------------------------------------------------
 // Extraction
 // -----------------------------------------------------
 
@@ -212,9 +244,6 @@ async function executerExtraction() {
 
         }
 
-        console.log("Test Python >>>>>>>>>>>");
-        console.log(id_PKO);
-
         pyodide.globals.set(
             "pko_id",
             id_PKO
@@ -239,41 +268,9 @@ async function executerExtraction() {
         console.log(pagesPko);
         console.log("Fin");
 
-
-        // -----------------------------------------------------
-        // Ecriture de tout le texte dans la ligne PKO
-        // -----------------------------------------------------
-        /* let texteComplet = "";
-
-        for (let i = 1; i <= pdf.numPages; i++) {
-
-            statusDiv.innerText =
-                `Lecture page ${i}/${pdf.numPages}`;
-
-            const page =
-                await pdf.getPage(i);
-
-            const textContent =
-                await page.getTextContent();
-
-            const textePage =
-                textContent.items
-                    .map(item => item.str)
-                    .join(" ");
-
-            console.log(">>> 02");
-            texteComplet +=
-                `--- Page ${i} ---\n${textePage}\n\n`;
-        }
-
-        const tableId =
-            await grist.getSelectedTableId();
-
- */
         // -----------------------------------------------------
         // Ecriture des pages agent dans la page agent
         // -----------------------------------------------------
-
 
         const actions = [];
 
@@ -281,7 +278,7 @@ async function executerExtraction() {
 
             actions.push([
                 "AddRecord",
-                "PKO_Pages",
+                TABLE_PKO_PAGES,
                 null,
                 page
             ]);
@@ -295,7 +292,25 @@ async function executerExtraction() {
         statusDiv.innerText =
             "Extraction terminée";
 
+        // -----------------------------------------------------
+        // récupération des données des pages pko extraites
+        // -----------------------------------------------------
+
+        const rawPages =
+            await grist.docApi.fetchTable(
+                TABLE_PKO_PAGES  
+            );
+
+        const pages =
+            tableToRecords(rawPages);
+
+        console.log(pages);
+
     }
+        // -----------------------------------------------------
+        // Gestion des erreurs
+        // -----------------------------------------------------
+
     catch (err) {
 
         console.error(err);
