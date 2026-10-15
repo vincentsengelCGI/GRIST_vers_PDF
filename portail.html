@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Portail Services</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+}
+
+/* Barre supérieure */
+
+#navbar {
+    height: 60px;
+    background: #003366;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    gap: 10px;
+}
+
+/* Boutons */
+
+.nav-btn {
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+    background: white;
+    color: #003366;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.nav-btn:hover {
+    background: #dce8f5;
+}
+
+.nav-btn.active {
+    background: #4caf50;
+    color: white;
+}
+
+/* Zone iframe */
+
+#content {
+    width: 100%;
+    height: calc(100vh - 60px);
+}
+
+#viewer {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="navbar">
+
+    <button class="nav-btn active"
+            onclick="loadPage(this, 'https://grist.numerique.gouv.fr/o/docs/xisLSeenbHie/MaquetteRDI?style=singlePage')">
+        Accueil
+    </button>
+
+    <button class="nav-btn"
+            onclick="loadPage(this, 'https://grist.numerique.gouv.fr/o/docs/xisLSeenbHie/MaquetteRDI/p/8?style=singlePage')">
+        PKO
+    </button>
+
+    <button class="nav-btn"
+            onclick="loadPage(this, 'https://grist.numerique.gouv.fr/o/docs/xisLSeenbHie/MaquetteRDI/p/10?style=singlePage')">
+        Agents
+    </button>
+
+    <button class="nav-btn"
+            onclick="loadPage(this, 'https://grist.numerique.gouv.fr/o/docs/xisLSeenbHie/MaquetteRDI/p/4?style=singlePage')">
+        Statistiques
+    </button>
+
+</div>
+
+<div id="content">
+    <iframe
+        id="viewer"
+        src="">
+    </iframe>
+</div>
+
+<script>
+
+function loadPage(button, url) {
+
+    document
+        .querySelectorAll('.nav-btn')
+        .forEach(btn => btn.classList.remove('active'));
+
+    button.classList.add('active');
+
+    document
+        .getElementById('viewer')
+        .src = url;
+}
+
+</script>
+
+</body>
+</html>
