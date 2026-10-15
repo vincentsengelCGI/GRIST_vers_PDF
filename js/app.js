@@ -456,7 +456,7 @@ async function executerExtraction() {
             ]);
 
         }
-        console.log("actions_lignes_indus >>>>>>>");
+        console.log("actions_lignes_indus >>");
         console.log(actions_lignes_indus);
 
         await grist.docApi.applyUserActions(

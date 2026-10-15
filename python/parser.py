@@ -45,11 +45,13 @@ def construire_agents(pagesPko):
 def construire_indus(induAgents):
 
     resultat = []
-    for indu in induAgents:
+    
+    for indu_agent in induAgents:
+        for indu in indu_agent["Indus_agents_liste_text"]:
 
-        resultat.append({
-            "indu_brut": indu["Indus_agents_liste_text"],
-            "agent_ID": indu["id"]
-        })
+            resultat.append({
+                "indu_brut": indu,
+                "agent_ID": indu_agent["id"]
+            })
 
     return json.dumps(resultat)
