@@ -5,9 +5,10 @@
 const PKO_NOM_COLONNE_PJ = "A_FichierSource";
 const PKO_NOM_COLONNE_ID = "id";
 
-const TABLE_AGENTS = "agents";
+const TABLE_AGENTS = "Agents";
 const TABLE_PKO = "PKO";
 const TABLE_PKO_PAGES = "PKO_Pages";
+const TABLE_INDUS = "Indus";
 
 let pyodide = null;
 
@@ -338,7 +339,7 @@ async function executerExtraction() {
         // -----------------------------------------------------
         // construction liste des agents
         // -----------------------------------------------------
-        console.log("construire agent python >>>>>>>");
+
         pyodide.globals.set(
             "pages_Du_Pko",
             pagesDuPko
@@ -353,7 +354,6 @@ async function executerExtraction() {
 
         const agents_a_creer =
             JSON.parse(agents_JSON);
-        console.log("fin ecrire agent python <<<<<<<<<<<");
 
         // -----------------------------------------------------
         // Ecriture des pages agent dans la page agent
@@ -363,7 +363,7 @@ async function executerExtraction() {
         );
 
         const table_existante =
-            await lireTable("Agents");
+            await lireTable(TABLE_AGENTS);
 
         console.log("table existante >>>>>>>");
         console.log(table_existante);
@@ -377,14 +377,13 @@ async function executerExtraction() {
             console.log(ligne_agent);
             actions_lignes_agents.push([
                 "AddRecord",
-                "Agents",
+                TABLE_AGENTS,
                 null,
                 ligne_agent
             ]);
 
         }
 
-        console.log("action agents >>>>>>>");
         console.log(actions_lignes_agents);
 
         await grist.docApi.applyUserActions(
@@ -394,6 +393,72 @@ async function executerExtraction() {
         statusDiv.innerText =
             "lignes agents créés";
 
+        // -----------------------------------------------------
+        // Lecture des indus brut depuis la table agents
+        // -----------------------------------------------------
+            
+        const table_agents =
+            await lireTable(TABLE_AGENTS);
+
+        const indus_agents =
+        table_agents.filter(
+            p => p.PKO_id === currentRecordId
+        );
+        
+        statusDiv.innerText =
+        "lecture des données indus...";
+
+        // -----------------------------------------------------
+        // construction liste des indus
+        // -----------------------------------------------------
+
+        console.log("construire indus python >>>>>>>");
+        
+        pyodide.globals.set(
+            "indus_agents",
+            indus_agents
+        );
+
+        const indus_JSON =
+           await pyodide.runPythonAsync(`
+            construire_indus(
+                indus_agents.to_py()
+            )
+       `);
+
+        const indus_a_creer =
+            JSON.parse(indus_JSON);
+
+        // -----------------------------------------------------
+        // Ecriture des pages indus dans la page indus
+        // -----------------------------------------------------
+
+        statusDiv.innerText =
+            "création des lignes indus...";
+
+        const actions_lignes_indus = [];
+
+        for (const ligne_indus of indus_a_creer) {
+            console.log(ligne_indus);
+            actions_lignes_indus.push([
+                "AddRecord",
+                TABLE_INDUS,
+                null,
+                ligne_indus
+            ]);
+
+        }
+
+        console.log(actions_lignes_indus);
+
+        await grist.docApi.applyUserActions(
+            actions_lignes_indus
+        );
+
+        statusDiv.innerText =
+            "lignes indus créés";
+        
+        
     }
         // -----------------------------------------------------
         // Gestion des erreurs
