@@ -400,10 +400,16 @@ async function executerExtraction() {
         const table_agents =
             await lireTable(TABLE_AGENTS);
 
+        console.log("table agents:");
+        console.log(table_agents);
+
         const indus_agents =
         table_agents.filter(
             p => p.PKO_ID === currentRecordId
         );
+
+        console.log("indus_agents:");
+        console.log(indus_agents);
         
         statusDiv.innerText =
         "lecture des données indus...";
