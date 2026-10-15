@@ -402,7 +402,7 @@ async function executerExtraction() {
 
         const indus_agents =
         table_agents.filter(
-            p => p.PKO_id === currentRecordId
+            p => p.PKO_ID === currentRecordId
         );
         
         statusDiv.innerText =
@@ -428,6 +428,8 @@ async function executerExtraction() {
 
         const indus_a_creer =
             JSON.parse(indus_JSON);
+        console.log("indus_a_creer:");
+        console.log(indus_a_creer);
 
         // -----------------------------------------------------
         // Ecriture des pages indus dans la page indus
@@ -448,7 +450,7 @@ async function executerExtraction() {
             ]);
 
         }
-
+        console.log("actions_lignes_indus >>>>>>>");
         console.log(actions_lignes_indus);
 
         await grist.docApi.applyUserActions(
