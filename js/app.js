@@ -58,7 +58,12 @@ async function initialiserWidget() {
     
     userEmail = getUtilisateurEmail();
 
+    console.log("recherche de :", emailUtilisateur, " dans la table des utilisateurs...");
+
     const contexte = await lireTable('Referentiel_utilisateurs')
+
+    console.log("Contexte utilisateur :", contexte);
+    
     const ligneUtilisateur =
     contexte.records.find(
         r => r.utilisateur_courriel === userEmail
@@ -182,27 +187,22 @@ async function getUtilisateurEmail() {
   try {
     // 1. Demander à Grist de créer une ligne vide dans notre table tampon
     const nouvelleLigne = await grist.getTable('Session_utilisateur').create({ fields: {} });
-    console.log("Ligne temporaire créée :", nouvelleLigne);
 
     // 2. Récupérer l'ID de la ligne créée
     const rowId = nouvelleLigne.id;
-    console.log("row_id :", rowId);
 
     // 3. Lire la ligne pour récupérer la valeur injectée par la formule Grist
     const records = await lireTable('Session_utilisateur')
-    console.log("Records de la table Session_utilisateur :", records);
 
     const session = records.find(r => r.id === rowId);
-    console.log("Session récupérée :", session);
 
     const emailUtilisateur = session.email;
-    console.log("Email utilisateur :", emailUtilisateur);
     
     // 4. Nettoyer la table en supprimant la ligne temporaire
     await grist.getTable('Session_utilisateur').destroy(rowId);
     
     // Vous avez maintenant le nom de l'utilisateur !
-    console.log("Utilisateur connecté :", emailUtilisateur);
+    console.log("Utilisateur trouvé :", emailUtilisateur);
     return emailUtilisateur;
 
   } catch (error) {
