@@ -58,12 +58,12 @@ async function initialiserWidget() {
     
     userEmail = getUtilisateurEmail();
 
-    console.log("recherche de :", emailUtilisateur, " dans la table des utilisateurs...");
+    console.log("recherche de :", userEmail, " dans la table des utilisateurs...");
 
     const contexte = await lireTable('Referentiel_utilisateurs')
 
     console.log("Contexte utilisateur :", contexte);
-    
+
     const ligneUtilisateur =
     contexte.records.find(
         r => r.utilisateur_courriel === userEmail
