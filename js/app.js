@@ -56,7 +56,7 @@ async function initialiserWidget() {
 
     console.log("identification de l'utilisateur...");
     
-    userEmail = getUtilisateurEmail();
+    userEmail = await getUtilisateurEmail();
 
     console.log("recherche de :", userEmail, " dans la table des utilisateurs...");
 
