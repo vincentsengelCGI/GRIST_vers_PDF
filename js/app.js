@@ -49,23 +49,23 @@ async function initialiserWidget() {
     console.log("pdfjsLib OK :", pdfjsLib.version);
     console.log("selectedTable =", grist.selectedTable);
 
-    console.log("identification de l'utilisateur...");
-    const email = utilisateur.email;
-    console.log("Utilisateur trouvé :", email);
-    const contexte =
-    await grist.docApi.fetchTable("Referentiel_utilisateurs");
-    const ligneUtilisateur =
-    contexte.records.find(
-        r => r.utilisateur_courriel === email
-    );
-    console.log("Utilisateur connecté :", ligneUtilisateur.utilisateur_courriel);
-
-
-
     grist.ready({
         requiredAccess: "full",
         allowSelectBy: true
     });
+
+    console.log("identification de l'utilisateur...");
+    
+    userEmail = getUtilisateurEmail();
+
+    const contexte =
+    await grist.docApi.fetchTable("Referentiel_utilisateurs");
+    const ligneUtilisateur =
+    contexte.records.find(
+        r => r.utilisateur_courriel === userEmail
+    );
+
+    console.log("Utilisateur connecté :", ligneUtilisateur.utilisateur_courriel);
 
     grist.onRecord(async (record) => {
 
@@ -173,6 +173,36 @@ async function initPyodide() {
     console.log("Chargement de Pyodide...");
     pyodide = await loadPyodide();
     console.log("Pyodide prêt");
+}
+
+// -----------------------------------------------------
+// identification utilisateur
+// -----------------------------------------------------
+
+async function getUtilisateurEmail() {
+  try {
+    // 1. Demander à Grist de créer une ligne vide dans notre table tampon
+    const nouvelleLigne = await grist.getTable('SessionUtilisateur').create({ fields: {} });
+    
+    // 2. Récupérer l'ID de la ligne créée
+    const rowId = nouvelleLigne[0].id;
+    
+    // 3. Lire la ligne pour récupérer la valeur injectée par la formule Grist
+    const records = await grist.getTable('Session_utilisateur').getRecords();
+    const session = records.find(r => r.id === rowId);
+    const emailUtilisateur = session.fields.email;
+    
+    // 4. Nettoyer la table en supprimant la ligne temporaire
+    await grist.getTable('Session_utilisateur').destroy(rowId);
+    
+    // Vous avez maintenant le nom de l'utilisateur !
+    console.log("Utilisateur connecté :", emailUtilisateur);
+    return emailUtilisateur;
+
+  } catch (error) {
+    console.error("Impossible de récupérer le nom d'utilisateur", error);
+    return null;
+  }
 }
 
 // -----------------------------------------------------
