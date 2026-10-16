@@ -459,13 +459,18 @@ async function executerExtraction() {
         console.log("actions_lignes_indus >>");
         console.log(actions_lignes_indus);
 
-        await grist.docApi.applyUserActions(
+        const resultat_actions = await grist.docApi.applyUserActions(
             actions_lignes_indus
         );
 
         statusDiv.innerText =
             "lignes indus créés";
-        
+
+        const rowId_a = result.retValues[0];
+        console.log("rowId_a:", rowId_a);
+
+        const rowId_b = result.retValues[0][0];
+        console.log("rowId_b:", rowId_b);
         
     }
         // -----------------------------------------------------
