@@ -65,13 +65,13 @@ async function initialiserWidget() {
     console.log("Contexte utilisateur :", contexte);
 
     const ligneUtilisateur =
-    contexte.records.find(
+    await contexte.records.find(
         r => r.utilisateur_courriel === userEmail
     );
 
     console.log("Utilisateur actif :", ligneUtilisateur.utilisateur_nomPrenom);
 
-    grist.onRecord(async (record) => {
+    await grist.onRecord(async (record) => {
 
         console.log("Record reçu :", record);
 
