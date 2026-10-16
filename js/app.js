@@ -54,12 +54,15 @@ async function initialiserWidget() {
         allowSelectBy: true
     });
 
+
+    // appel de la fonction pour récupérer l'email de l'utilisateur
     console.log("identification de l'utilisateur...");
     
     userEmail = await getUtilisateurEmail();
 
     console.log("recherche de :", userEmail, " dans la table des utilisateurs...");
 
+    // recherche de l'utilisateur dans la table des utilisateurs
     const contexte = await lireTable('Referentiel_utilisateurs')
 
     console.log("Contexte utilisateur :", contexte);
@@ -68,6 +71,7 @@ async function initialiserWidget() {
 
     console.log("Utilisateur actif :", ligneUtilisateur.utilisateur_nomPrenom);
 
+    // action à effectuer lorsque l'utilisateur sélectionne un enregistrement dans la table PKO
     grist.onRecord(async (record) => {
 
         console.log("Record reçu :", record);
@@ -79,6 +83,7 @@ async function initialiserWidget() {
 
         currentRecordId = record.id;
 
+        // lecture des pièces jointes et de l'id du PKO
         const attachment = record[PKO_NOM_COLONNE_PJ];
         id_PKO = record[PKO_NOM_COLONNE_ID];
 
@@ -127,17 +132,22 @@ async function initialiserWidget() {
             btn.disabled = true;
         }
 
-        console.log("ecriture contexte pko");
-        await grist.docApi.applyUserActions([
-            [
-                "UpdateRecord",
-                "Referentiel_utilisateurs",
-                ligneUtilisateur.id,
-                {
-                    Contexte_PKO: record.id
-                }
-            ]
-        ]);
+        // mise à jour du contexte PKO dans la table des utilisateurs
+
+        if (ligneUtilisateur.Contexte_PKO !== record.id) {
+            console.log("ecriture contexte pko");
+            await grist.docApi.applyUserActions([
+                [
+                    "UpdateRecord",
+                    "Referentiel_utilisateurs",
+                    ligneUtilisateur.id,
+                    {
+                        Contexte_PKO: record.id
+                    }
+                ]
+            ]);
+        }
+
 
     });
 }
