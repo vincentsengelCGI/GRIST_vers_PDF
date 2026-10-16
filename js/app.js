@@ -333,6 +333,8 @@ async function executerExtraction() {
             pages.filter(
                 p => p.PKO_id === currentRecordId
             );
+        
+        const valeurLigneFin = currentRecordId;
 
         statusDiv.innerText =
             "lecture des données agents...";
@@ -467,9 +469,10 @@ async function executerExtraction() {
         statusDiv.innerText =
             "lignes indus créés";
 
-        const rowId = ligne_agent_cree[0];
+        const rowId = ligne_agent_cree;
         console.log("rowId:", rowId);
-        
+        console.log("valeurLigneFin:", valeurLigneFin);
+
         grist.setCursorPos({rowId: 'new'});
 
         const record = await grist.docApi.fetchSelectedRecord();
