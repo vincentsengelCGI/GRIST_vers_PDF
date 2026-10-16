@@ -58,14 +58,13 @@ async function initialiserWidget() {
     
     userEmail = getUtilisateurEmail();
 
-    const contexte =
-    await grist.docApi.fetchTable("Referentiel_utilisateurs");
+    const contexte = await lireTable('Referentiel_utilisateurs')
     const ligneUtilisateur =
     contexte.records.find(
         r => r.utilisateur_courriel === userEmail
     );
 
-    console.log("Utilisateur connecté :", ligneUtilisateur.utilisateur_courriel);
+    console.log("Utilisateur actif :", ligneUtilisateur.utilisateur_nomPrenom);
 
     grist.onRecord(async (record) => {
 
@@ -192,8 +191,10 @@ async function getUtilisateurEmail() {
     // 3. Lire la ligne pour récupérer la valeur injectée par la formule Grist
     const records = await lireTable('Session_utilisateur')
     console.log("Records de la table Session_utilisateur :", records);
+
     const session = records.find(r => r.id === rowId);
     console.log("Session récupérée :", session);
+
     const emailUtilisateur = session.email;
     console.log("Email utilisateur :", emailUtilisateur);
     
