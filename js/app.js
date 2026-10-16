@@ -54,7 +54,7 @@ async function initialiserWidget() {
         allowSelectBy: true
     });
 
-    setTimeout(async () => {
+    ligneUtilisateur = setTimeout(async () => {
 
             // appel de la fonction pour récupérer l'email de l'utilisateur
             console.log("identification de l'utilisateur...");
@@ -68,11 +68,13 @@ async function initialiserWidget() {
 
             console.log("Contexte utilisateur :", contexte);
 
-            const ligneUtilisateur = contexte.find(({ utilisateur_courriel }) => utilisateur_courriel === userEmail);
+            const utilisateur_trouve = contexte.find(({ utilisateur_courriel }) => utilisateur_courriel === userEmail);
 
-            console.log("Utilisateur actif :", ligneUtilisateur.utilisateur_nomPrenom);
+            console.log("Utilisateur actif :", utilisateur_trouve.utilisateur_nomPrenom);
 
             await chargerContexte(userEmail);
+
+            return utilisateur_trouve;
 
     }, 500);
 
@@ -141,7 +143,7 @@ async function initialiserWidget() {
         console.log("Mise à jour du contexte PKO pour l'utilisateur :", ligneUtilisateur.utilisateur_nomPrenom);
         console.log("Contexte PKO actuel :", ligneUtilisateur.Contexte_PKO);
         console.log("Contexte PKO à mettre à jour :", record.id);
-        
+
         if (ligneUtilisateur.Contexte_PKO !== record.id) {
             console.log("ecriture contexte pko");
             await grist.docApi.applyUserActions([
@@ -155,7 +157,6 @@ async function initialiserWidget() {
                 ]
             ]);
         }
-
 
     });
 }
