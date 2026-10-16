@@ -182,7 +182,7 @@ async function initPyodide() {
 async function getUtilisateurEmail() {
   try {
     // 1. Demander à Grist de créer une ligne vide dans notre table tampon
-    const nouvelleLigne = await grist.getTable('SessionUtilisateur').create({ fields: {} });
+    const nouvelleLigne = await grist.getTable('Session_utilisateur').create({ fields: {} });
     
     // 2. Récupérer l'ID de la ligne créée
     const rowId = nouvelleLigne[0].id;
