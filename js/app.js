@@ -473,7 +473,7 @@ async function executerExtraction() {
         console.log("rowId:", rowId);
         console.log("valeurLigneFin:", valeurLigneFin);
 
-        grist.setCursorPos({rowId: 'new'});
+        grist.setCursorPos({rowId: 'valeurLigneFin'});
 
         const record = await grist.docApi.fetchSelectedRecord();
 
