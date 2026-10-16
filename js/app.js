@@ -49,12 +49,25 @@ async function initialiserWidget() {
     console.log("pdfjsLib OK :", pdfjsLib.version);
     console.log("selectedTable =", grist.selectedTable);
 
+    console.log("identification de l'utilisateur...");
+    const email = utilisateur.email;
+    console.log("Utilisateur trouvé :", email);
+    const contexte =
+    await grist.docApi.fetchTable("Referentiel_utilisateurs");
+    const ligneUtilisateur =
+    contexte.records.find(
+        r => r.utilisateur_courriel === email
+    );
+    console.log("Utilisateur connecté :", ligneUtilisateur.utilisateur_courriel);
+
+
+
     grist.ready({
         requiredAccess: "full",
         allowSelectBy: true
     });
 
-    grist.onRecord(record => {
+    grist.onRecord(async (record) => {
 
         console.log("Record reçu :", record);
 
@@ -113,10 +126,22 @@ async function initialiserWidget() {
             btn.disabled = true;
         }
 
+        console.log("ecriture contexte pko");
+        await grist.docApi.applyUserActions([
+            [
+                "UpdateRecord",
+                "Referentiel_utilisateurs",
+                ligneUtilisateur.id,
+                {
+                    Contexte_PKO: record.id
+                }
+            ]
+        ]);
+
     });
 }
 
-// -----------------------------------------------------
+// ---------------------------------------------    --------
 // parser python
 // -----------------------------------------------------
 
@@ -498,6 +523,8 @@ async function executerExtraction() {
 // -----------------------------------------------------
 
 btn.onclick = executerExtraction;
+
+
 
 // -----------------------------------------------------
 // Démarrage
