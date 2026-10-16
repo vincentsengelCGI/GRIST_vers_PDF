@@ -466,10 +466,10 @@ async function executerExtraction() {
         statusDiv.innerText =
             "lignes indus créés";
 
-        const rowId_a = result.retValues[0];
+        const rowId_a = resultat_actions.retValues[0];
         console.log("rowId_a:", rowId_a);
 
-        const rowId_b = result.retValues[0][0];
+        const rowId_b = resultat_actions.retValues[0][0];
         console.log("rowId_b:", rowId_b);
         
     }
