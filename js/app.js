@@ -191,8 +191,11 @@ async function getUtilisateurEmail() {
 
     // 3. Lire la ligne pour récupérer la valeur injectée par la formule Grist
     const records = await grist.getTable('Session_utilisateur').getRecords();
+    console.log("Records de la table Session_utilisateur :", records);
     const session = records.find(r => r.id === rowId);
+    console.log("Session récupérée :", session);
     const emailUtilisateur = session.fields.email;
+    console.log("Email utilisateur :", emailUtilisateur);
     
     // 4. Nettoyer la table en supprimant la ligne temporaire
     await grist.getTable('Session_utilisateur').destroy(rowId);
