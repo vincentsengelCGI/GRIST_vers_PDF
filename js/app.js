@@ -54,7 +54,7 @@ async function initialiserWidget() {
         allowSelectBy: true
     });
 
-setTimeout(async () => {
+userEmail = setTimeout(async () => {
 
             // appel de la fonction pour récupérer l'email de l'utilisateur
             console.log("identification de l'utilisateur...");
@@ -73,6 +73,8 @@ setTimeout(async () => {
             console.log("Utilisateur actif :", utilisateur_trouve.utilisateur_nomPrenom);
 
             await chargerContexte(userEmail);
+
+            return userEmail;
 
     }, 500);
 
@@ -138,7 +140,7 @@ setTimeout(async () => {
         }
 
         // recherche de l'utilisateur dans la table des utilisateurs
-        
+
         const contexte = await lireTable('Referentiel_utilisateurs')
 
         console.log("Contexte utilisateur :", contexte);
