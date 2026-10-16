@@ -184,9 +184,9 @@ async function getUtilisateurEmail() {
     // 1. Demander à Grist de créer une ligne vide dans notre table tampon
     const nouvelleLigne = await grist.getTable('Session_utilisateur').create({ fields: {} });
     console.log("Ligne temporaire créée :", nouvelleLigne);
-    
+
     // 2. Récupérer l'ID de la ligne créée
-    const rowId = nouvelleLigne[0].id;
+    const rowId = nouvelleLigne.id;
     
     // 3. Lire la ligne pour récupérer la valeur injectée par la formule Grist
     const records = await grist.getTable('Session_utilisateur').getRecords();
