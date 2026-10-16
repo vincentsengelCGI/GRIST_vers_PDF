@@ -185,8 +185,11 @@ async function getUtilisateurEmail() {
     const nouvelleLigne = await grist.getTable('Session_utilisateur').create({ fields: {} });
     console.log("Ligne temporaire créée :", nouvelleLigne);
 
+    const nouvelleLigne_test = await grist.getTable('Session_utilisateur').create();
+    console.log("Ligne temporaire créée :", nouvelleLigne_test);
+
     // 2. Récupérer l'ID de la ligne créée
-    const rowId = nouvelleLigne.id;
+    const rowId = nouvelleLigne['id'];
     
     // 3. Lire la ligne pour récupérer la valeur injectée par la formule Grist
     const records = await grist.getTable('Session_utilisateur').getRecords();
