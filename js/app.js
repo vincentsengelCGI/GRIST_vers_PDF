@@ -50,7 +50,8 @@ async function initialiserWidget() {
     console.log("selectedTable =", grist.selectedTable);
 
     grist.ready({
-        requiredAccess: "full"
+        requiredAccess: "full",
+        allowSelectBy: true
     });
 
     grist.onRecord(record => {
