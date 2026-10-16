@@ -467,15 +467,16 @@ async function executerExtraction() {
         statusDiv.innerText =
             "lignes indus créés";
 
-        const rowId = resultat_actions.retValues[0];
-        console.log("rowId:", rowId);
+        await grist.setCursorPos({
+        rowId: 2,
+        fieldIndex: 0
+        });
 
         const record = await grist.docApi.fetchSelectedRecord();
 
         console.log(record);
 
-        const cursor_pos = await grist.setCursorPos(1);
-        console.log(cursor_pos);
+
     }
         // -----------------------------------------------------
         // Gestion des erreurs
