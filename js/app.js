@@ -473,7 +473,7 @@ async function executerExtraction() {
 
         console.log(record);
 
-        await grist.setCursorPos({rowId: 1});
+        await grist.setCursorPos(1);
 
     }
         // -----------------------------------------------------
