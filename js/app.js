@@ -186,7 +186,7 @@ async function getUtilisateurEmail() {
     console.log("Ligne temporaire créée :", nouvelleLigne);
 
     // 2. Récupérer l'ID de la ligne créée
-    const rowId = nouvelleLigne[0];
+    const rowId = nouvelleLigne.id;
     console.log("row_id :", rowId);
     console.log(rowId.id);
 
