@@ -387,7 +387,7 @@ async function executerExtraction() {
 
         console.log(actions_lignes_agents);
 
-        await grist.docApi.applyUserActions(
+        const ligne_agent_cree = await grist.docApi.applyUserActions(
             actions_lignes_agents
         );
 
@@ -467,7 +467,10 @@ async function executerExtraction() {
         statusDiv.innerText =
             "lignes indus créés";
 
-        grist.setCursorPos({rowId: 2});
+        const rowId = ligne_agent_cree[0];
+        console.log("rowId:", rowId);
+        
+        grist.setCursorPos({rowId: 'new'});
 
         const record = await grist.docApi.fetchSelectedRecord();
 
