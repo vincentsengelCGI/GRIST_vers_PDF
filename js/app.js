@@ -194,7 +194,7 @@ async function getUtilisateurEmail() {
     console.log("Records de la table Session_utilisateur :", records);
     const session = records.find(r => r.id === rowId);
     console.log("Session récupérée :", session);
-    const emailUtilisateur = session.fields.email;
+    const emailUtilisateur = session.email;
     console.log("Email utilisateur :", emailUtilisateur);
     
     // 4. Nettoyer la table en supprimant la ligne temporaire
