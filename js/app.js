@@ -138,7 +138,10 @@ async function initialiserWidget() {
         }
 
         // mise à jour du contexte PKO dans la table des utilisateurs
-
+        console.log("Mise à jour du contexte PKO pour l'utilisateur :", ligneUtilisateur.utilisateur_nomPrenom);
+        console.log("Contexte PKO actuel :", ligneUtilisateur.Contexte_PKO);
+        console.log("Contexte PKO à mettre à jour :", record.id);
+        
         if (ligneUtilisateur.Contexte_PKO !== record.id) {
             console.log("ecriture contexte pko");
             await grist.docApi.applyUserActions([
