@@ -471,7 +471,7 @@ async function executerExtraction() {
         statusDiv.innerText =
             "lignes indus créés";
 
-        await grist.setCursorPos({rowId: 2});
+        grist.setCursorPos({rowId: 2});
 
         const record = await grist.docApi.fetchSelectedRecord();
 
