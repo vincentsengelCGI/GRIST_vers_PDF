@@ -543,7 +543,7 @@ async function executerExtraction() {
 
         console.log("valeurLigneFin:", valeurLigneFin);
 
-        grist.setCursorPos({rowId: valeurLigneFin});
+        await grist.setCursorPos({rowId: valeurLigneFin});
 
 
     }
@@ -570,7 +570,7 @@ async function executerExtraction() {
 
 async function chargerContexte() {
 
-    const email = ligneUtilisateur.email;
+    const userEmail = ligneUtilisateur.email;
 
     const contexte = await lireTable('Referentiel_utilisateurs')
 
@@ -578,11 +578,9 @@ async function chargerContexte() {
 
     if (!current_user) return;
 
-    if (!current_user.PKO_ACTIF) return;
+    if (!current_user.Contexte_PKO) return;
 
-    await grist.setCursorPos(
-        current_user.PKO_ACTIF
-    );
+    await grist.setCursorPos({rowId: current_user.Contexte_PKO});
 }
 
 
