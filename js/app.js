@@ -464,8 +464,10 @@ async function executerExtraction() {
             actions_lignes_indus
         );
 
-        cursor_pos = await grist.grist-plugin-api.CursorPos()
-
+        cursor_pos = await grist.grist-plugin-api.CursorPos();
+        console.log("cursor_pos >>>>>>");
+        console.log(cursor_pos);   
+        
         statusDiv.innerText =
             "lignes indus créés";
 
