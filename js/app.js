@@ -468,9 +468,8 @@ async function executerExtraction() {
 
         const rowId = resultat_actions.retValues[0];
         console.log("rowId:", rowId);
-        await grist.setCursorPos({
-            rowId
-        });
+        
+        await grist.docApi.selectById(rowId);
 
     }
         // -----------------------------------------------------
