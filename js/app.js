@@ -473,16 +473,7 @@ async function executerExtraction() {
 
         console.log(record);
 
-        await grist.setCursorPos({
-            rowId: rowId
-        });
-
-        const selected =
-        await grist.docApi.fetchSelectedRecord();
-
-        console.log("après setCursorPos", selected);
-
-        await grist.setCursorPos(rowId);
+        await grist.setCursorPos({rowId: 1});
 
     }
         // -----------------------------------------------------
