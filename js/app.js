@@ -54,6 +54,12 @@ async function initialiserWidget() {
         allowSelectBy: true
     });
 
+    setTimeout(async () => {
+
+        await chargerContexte();
+
+    }, 500);
+
 
     // appel de la fonction pour récupérer l'email de l'utilisateur
     console.log("identification de l'utilisateur...");
@@ -429,9 +435,6 @@ async function executerExtraction() {
         // -----------------------------------------------------
         // Ecriture des pages agent dans la page agent
         // -----------------------------------------------------
-        console.log(
-            await grist.docApi.listTables()
-        );
 
         const table_existante =
             await lireTable(TABLE_AGENTS);
@@ -560,6 +563,28 @@ async function executerExtraction() {
         btn.disabled = false;
     }
 }
+
+//
+// Aller à la page utilisateurs du pko
+//
+
+async function chargerContexte() {
+
+    const email = ligneUtilisateur.email;
+
+    const contexte = await lireTable('Referentiel_utilisateurs')
+
+    const current_user = contexte.find(({ utilisateur_courriel }) => utilisateur_courriel === userEmail);
+
+    if (!current_user) return;
+
+    if (!current_user.PKO_ACTIF) return;
+
+    await grist.setCursorPos(
+        current_user.PKO_ACTIF
+    );
+}
+
 
 // -----------------------------------------------------
 // Bouton
