@@ -466,12 +466,12 @@ async function executerExtraction() {
         statusDiv.innerText =
             "lignes indus créés";
 
-        const rowId_a = resultat_actions.retValues[0];
-        console.log("rowId_a:", rowId_a);
+        const rowId = resultat_actions.retValues[0];
+        console.log("rowId:", rowId);
+        await grist.setCursorPos({
+            rowId
+        });
 
-        const rowId_b = resultat_actions.retValues[0][0];
-        console.log("rowId_b:", rowId_b);
-        
     }
         // -----------------------------------------------------
         // Gestion des erreurs
