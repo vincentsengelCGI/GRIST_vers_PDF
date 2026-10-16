@@ -64,7 +64,7 @@ async function initialiserWidget() {
 
     console.log("Contexte utilisateur :", contexte);
 
-    const ligneUtilisateur = inventory.find(({ utilisateur_courriel }) => utilisateur_courriel === userEmail);
+    const ligneUtilisateur = contexte.find(({ utilisateur_courriel }) => utilisateur_courriel === userEmail);
 
     console.log("Utilisateur actif :", ligneUtilisateur.utilisateur_nomPrenom);
 
