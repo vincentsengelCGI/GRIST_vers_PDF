@@ -472,7 +472,7 @@ async function executerExtraction() {
 
         console.log("valeurLigneFin:", valeurLigneFin);
 
-        grist.setCursorPos({rowId: 'valeurLigneFin'});
+        grist.setCursorPos({rowId: valeurLigneFin});
 
 
     }
