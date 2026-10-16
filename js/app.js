@@ -56,26 +56,25 @@ async function initialiserWidget() {
 
     setTimeout(async () => {
 
-        await chargerContexte();
+            // appel de la fonction pour récupérer l'email de l'utilisateur
+            console.log("identification de l'utilisateur...");
+            
+            userEmail = await getUtilisateurEmail();
+
+            console.log("recherche de :", userEmail, " dans la table des utilisateurs...");
+
+            // recherche de l'utilisateur dans la table des utilisateurs
+            const contexte = await lireTable('Referentiel_utilisateurs')
+
+            console.log("Contexte utilisateur :", contexte);
+
+            const ligneUtilisateur = contexte.find(({ utilisateur_courriel }) => utilisateur_courriel === userEmail);
+
+            console.log("Utilisateur actif :", ligneUtilisateur.utilisateur_nomPrenom);
+
+            await chargerContexte(userEmail);
 
     }, 500);
-
-
-    // appel de la fonction pour récupérer l'email de l'utilisateur
-    console.log("identification de l'utilisateur...");
-    
-    userEmail = await getUtilisateurEmail();
-
-    console.log("recherche de :", userEmail, " dans la table des utilisateurs...");
-
-    // recherche de l'utilisateur dans la table des utilisateurs
-    const contexte = await lireTable('Referentiel_utilisateurs')
-
-    console.log("Contexte utilisateur :", contexte);
-
-    const ligneUtilisateur = contexte.find(({ utilisateur_courriel }) => utilisateur_courriel === userEmail);
-
-    console.log("Utilisateur actif :", ligneUtilisateur.utilisateur_nomPrenom);
 
     // action à effectuer lorsque l'utilisateur sélectionne un enregistrement dans la table PKO
     grist.onRecord(async (record) => {
@@ -568,9 +567,7 @@ async function executerExtraction() {
 // Aller à la page utilisateurs du pko
 //
 
-async function chargerContexte() {
-
-    const userEmail = ligneUtilisateur.email;
+async function chargerContexte(userEmail) {
 
     const contexte = await lireTable('Referentiel_utilisateurs')
 
@@ -583,14 +580,11 @@ async function chargerContexte() {
     await grist.setCursorPos({rowId: current_user.Contexte_PKO});
 }
 
-
 // -----------------------------------------------------
 // Bouton
 // -----------------------------------------------------
 
 btn.onclick = executerExtraction;
-
-
 
 // -----------------------------------------------------
 // Démarrage
