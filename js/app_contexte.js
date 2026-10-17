@@ -3,20 +3,11 @@
 // -----------------------------------------------------
 
 
-const TABLE_UTILISATEURS =
-config.tableUtilisateurs;
-
-const COLONNE_UTILISATEURS_EMAIL =
-    config.colonneEmail;
-
-const COLONNE_UTILISATEURS_NOMCOMPLET =
-    config.colonneNom;
-
-const TABLE_SESSION_UTILISATEUR =
-    config.tableSession;
-
-const COLONNE_SESSION_UTILISATEUR_CONTEXTE =
-    config.colonneContexte;
+const TABLE_UTILISATEURS = "Referentiel_utilisateurs";
+const COLONNE_UTILISATEURS_EMAIL = "COLONNE_UTILISATEURS_EMAIL";
+const COLONNE_UTILISATEURS_NOMCOMPLET = "utilisateur_nomPrenom)";
+const TABLE_SESSION_UTILISATEUR = "Session_utilisateur";
+const COLONNE_SESSION_UTILISATEUR_CONTEXTE = "Contexte_PKO";
 
 // -----------------------------------------------------
 // Variables
