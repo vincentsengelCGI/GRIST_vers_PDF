@@ -79,6 +79,8 @@ async function initialiserWidget() {
         
     });
 
+    document.getElementById('display-var').innerText = maVariable;
+
     document.getElementById('save-btn').addEventListener('click', async function() {
         const nouvelleValeur = document.getElementById('my-variable-input').value;
         const new_TABLE_UTILISATEURS = document.getElementById('table-utilisateur').value;
