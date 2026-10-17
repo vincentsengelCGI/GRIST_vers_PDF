@@ -54,18 +54,17 @@ async function initialiserWidget() {
     console.log("recherche email utilisateur...")
     setTimeout( async () => {
 
-        
         console.log("recherche de :", userEmail, " dans la table des utilisateurs...");
 
-            // recherche de l'utilisateur dans la table des utilisateurs
-            const contexte = await lireTable(TABLE_UTILISATEURS)
+        // recherche de l'utilisateur dans la table des utilisateurs
+        const contexte = await lireTable(TABLE_UTILISATEURS)
 
-            console.log("Contexte utilisateur :", contexte);
+        await console.log("Contexte utilisateur :", contexte);
 
-            const utilisateur_trouve = await contexte.find(row => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
-            console.log(utilisateur_trouve[COLONNE_UTILISATEURS_NOMCOMPLET])
+        const utilisateur_trouve = contexte.find(row => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
+        await console.log(utilisateur_trouve[COLONNE_UTILISATEURS_NOMCOMPLET])
 
-            await chargerContexte(userEmail);
+        await chargerContexte(userEmail);
 
     }, 500);
 
