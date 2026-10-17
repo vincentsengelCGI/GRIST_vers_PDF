@@ -69,6 +69,8 @@ async function initialiserWidget() {
 
     }, 500);
 
+    console.log(userEmail);
+
     grist.onOptions(function(options) {
         if (options) {
         // Grist renvoie toutes les options enregistrées. Si elles existent, on les applique
