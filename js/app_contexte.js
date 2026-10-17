@@ -87,8 +87,6 @@ async function initialiserWidget() {
 
             const utilisateur_trouve = contexte.find(row => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
 
-            console.log("Utilisateur actif :", utilisateur_trouve[COLONNE_UTILISATEURS_NOMCOMPLET]);
-
             statusDiv.innerText = ("Bonjour " + utilisateur_trouve[COLONNE_UTILISATEURS_NOMCOMPLET]);
 
             await chargerContexte(userEmail);
@@ -114,8 +112,6 @@ async function initialiserWidget() {
         const utilisateur_trouve = contexte.find(row => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
 
         // mise à jour du contexte PKO dans la table des utilisateurs
-        console.log("Mise à jour du contexte PKO pour l'utilisateur :", utilisateur_trouve[COLONNE_UTILISATEURS_NOMCOMPLET]);
-        console.log("Contexte PKO actuel :", utilisateur_trouve[COLONNE_SESSION_UTILISATEUR_CONTEXTE]);
         console.log("Contexte PKO à mettre à jour :", record.id);
 
         if (utilisateur_trouve[COLONNE_SESSION_UTILISATEUR_CONTEXTE] !== record.id) {
