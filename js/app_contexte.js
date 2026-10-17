@@ -47,30 +47,8 @@ async function initialiserWidget() {
         }
     });
 
-    // appel de la fonction pour récupérer l'email de l'utilisateur
-    console.log("identification de l'utilisateur...");
-    userEmail = await getUtilisateurEmail();
-    
-    console.log("recherche email utilisateur...")
-    setTimeout( async () => {
-
-        console.log("recherche de :", userEmail, " dans la table des utilisateurs...");
-
-        // recherche de l'utilisateur dans la table des utilisateurs
-        const contexte = await lireTable(TABLE_UTILISATEURS)
-
-        console.log("Contexte utilisateur :", contexte);
-
-        const utilisateur_trouve = contexte.find(row => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
-        
-        await chargerContexte(userEmail);
-        console.log(utilisateur_trouve[COLONNE_UTILISATEURS_NOMCOMPLET])
-
-    }, 500);
-
-    console.log(userEmail);
-
     grist.onOptions(function(options) {
+        console.log("chargement des options")
         if (options) {
         // Grist renvoie toutes les options enregistrées. Si elles existent, on les applique
             if (options.maConfigPerso) {
@@ -102,6 +80,30 @@ async function initialiserWidget() {
             }
         
     });
+    
+    // appel de la fonction pour récupérer l'email de l'utilisateur
+    console.log("identification de l'utilisateur...");
+    userEmail = await getUtilisateurEmail();
+    
+    console.log("recherche email utilisateur...")
+    setTimeout( async () => {
+
+        console.log("recherche de :", userEmail, " dans la table des utilisateurs...");
+
+        // recherche de l'utilisateur dans la table des utilisateurs
+        const contexte = await lireTable(TABLE_UTILISATEURS)
+
+        console.log("Contexte utilisateur :", contexte);
+
+        const utilisateur_trouve = contexte.find(row => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
+        
+        await chargerContexte(userEmail);
+        console.log(utilisateur_trouve[COLONNE_UTILISATEURS_NOMCOMPLET])
+
+    }, 500);
+
+    console.log(userEmail);
+
 
     document.getElementById('display-var').innerText = maVariable;
 
