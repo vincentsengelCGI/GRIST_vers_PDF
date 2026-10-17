@@ -2,11 +2,11 @@
 // Configuration
 // -----------------------------------------------------
 
-const TABLE_UTILISATEURS = "Referentiel_utilisateurs";
-const COLONNE_UTILISATEURS_EMAIL = "utilisateur_courriel";
-const COLONNE_UTILISATEURS_NOMCOMPLET = "utilisateur_nomPrenom)";
-const TABLE_SESSION_UTILISATEUR = "Session_utilisateur";
-const COLONNE_SESSION_UTILISATEUR_CONTEXTE = "Contexte_PKO";
+let TABLE_UTILISATEURS = "Referentiel_utilisateurs";
+let COLONNE_UTILISATEURS_EMAIL = "utilisateur_courriel";
+let COLONNE_UTILISATEURS_NOMCOMPLET = "utilisateur_nomPrenom)";
+let TABLE_SESSION_UTILISATEUR = "Session_utilisateur";
+let COLONNE_SESSION_UTILISATEUR_CONTEXTE = "???";
 
 // -----------------------------------------------------
 // Variables
@@ -47,23 +47,54 @@ async function initialiserWidget() {
     });
 
     grist.onOptions(function(options) {
+        if (options) {
         // Grist renvoie toutes les options enregistrées. Si elles existent, on les applique
-        if (options && options.maConfigPerso) {
-            maVariable = options.maConfigPerso;
+            if (options.maConfigPerso) {
+                maVariable = options.maConfigPerso;
+            }
+            if (options.cfg-nom-table-utilisateur) {
+                TABLE_UTILISATEURS = options.cfg-nom-table-utilisateur;
+            }
+            if (options.cfg-colonne-email) {
+                COLONNE_UTILISATEURS_EMAIL = options.cfg-colonne-email;
+            }
+            if (options.cfg-colonne-nomcomplet-utilisateur) {
+                COLONNE_UTILISATEURS_NOMCOMPLET = options.cfg-colonne-nomcomplet-utilisateur;
+            }
+            if (options.cfg-colonne-session) {
+                TABLE_SESSION_UTILISATEUR = options.cfg-colonne-session;
+            }
+            if (options.cfg-colonne-contexte) {
+                COLONNE_SESSION_UTILISATEUR_CONTEXTE = options.cfg-colonne-contexte;
+            }
             
-            // Remplir le champ de saisie avec la valeur stockée pour que l'utilisateur la voie
-            document.getElementById('my-variable-input').value = maVariable;
-        }
+                // Remplir le champ de saisie avec la valeur stockée pour que l'utilisateur la voie
+                document.getElementById('my-variable-input').value = maVariable;
+                document.getElementById('table-utilisateur').value = TABLE_UTILISATEURS;
+                document.getElementById('colonne-email').value = COLONNE_UTILISATEURS_EMAIL;
+                document.getElementById('colonne-nom-complet').value = COLONNE_UTILISATEURS_NOMCOMPLET;
+                document.getElementById('table-session').value = TABLE_SESSION_UTILISATEUR;
+                document.getElementById('colonne-contexte').value = COLONNE_SESSION_UTILISATEUR_CONTEXTE;
+            }
         
-        // Mettre à jour l'affichage de votre widget principal avec la variable rafraîchie
-        document.getElementById('display-var').innerText = maVariable;
     });
 
     document.getElementById('save-btn').addEventListener('click', async function() {
         const nouvelleValeur = document.getElementById('my-variable-input').value;
+        const new_TABLE_UTILISATEURS = document.getElementById('table-utilisateur').value;
+        const new_COLONNE_UTILISATEURS_EMAIL = document.getElementById('colonne-email').value;
+        const new_COLONNE_UTILISATEURS_NOMCOMPLET = document.getElementById('colonne-nom-complet').value;
+        const new_TABLE_SESSION_UTILISATEUR = document.getElementById('table-session').value;
+        const new_COLONNE_SESSION_UTILISATEUR_CONTEXTE = document.getElementById('colonne-contexte').value;
         
         // Sauvegarde persistante directement dans Grist
         await grist.setOption('maConfigPerso', nouvelleValeur);
+        await grist.setOption('cfg-nom-table-utilisateur', new_TABLE_UTILISATEURS);
+        await grist.setOption('cfg-colonne-email', new_COLONNE_UTILISATEURS_EMAIL);
+        await grist.setOption('cfg-colonne-nomcomplet-utilisateur', new_COLONNE_UTILISATEURS_NOMCOMPLET);
+        await grist.setOption('cfg-colonne-session', new_TABLE_SESSION_UTILISATEUR);
+        await grist.setOption('mcolonne-contexte', new_COLONNE_SESSION_UTILISATEUR_CONTEXTE);
+
         
         // Ré-afficher la vue principale et masquer la configuration
         document.getElementById('config-panel').style.display = 'none';
