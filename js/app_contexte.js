@@ -145,6 +145,11 @@ async function initialiserWidget() {
 
         // mise à jour du contexte PKO dans la table des utilisateurs
         console.log("Contexte PKO à mettre à jour :", record.id);
+        console.log(utilisateur_trouve);
+        console.log(utilisateur_trouve)[COLONNE_UTILISATEURS_NOMCOMPLET];
+        console.log(utilisateur_trouve)[COLONNE_UTILISATEURS_EMAIL];
+        console.log(utilisateur_trouve)[COLONNE_SESSION_UTILISATEUR_CONTEXTE];
+
 
         if (utilisateur_trouve[COLONNE_SESSION_UTILISATEUR_CONTEXTE] !== record.id) {
             console.log("ecriture contexte pko");
