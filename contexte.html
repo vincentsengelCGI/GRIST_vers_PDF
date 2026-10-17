@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Widget Grist de contexte</title>
+
+    <script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+    <link href="css/style.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="container">
+        <div id="status_contexte" class="status_contexte">
+            Démarrage...
+        </div>
+    </div>
+
+    <div id="main-view">
+        <h1>Mon Widget</h1>
+        <p>Valeur actuelle de ma variable : <span id="display-var">Auncune</span></p>
+    </div>
+
+    <!-- Panneau de configuration caché -->
+    <div id="config-panel" style="display: none; background: #f5f5f5; padding: 15px;">
+        <h3>Configuration du Widget</h3>
+        <label>
+            Ma Variable :
+            <input type="text" id="my-variable-input" />
+        </label>
+        <button id="save-btn">Enregistrer</button>
+    </div>
+
+</body>
+<script src="js/app_contexte.js"></script>
+
+</html>

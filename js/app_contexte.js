@@ -1,0 +1,267 @@
+// -----------------------------------------------------
+// Configuration
+// -----------------------------------------------------
+
+
+const TABLE_UTILISATEURS =
+config.tableUtilisateurs;
+
+const COLONNE_UTILISATEURS_EMAIL =
+    config.colonneEmail;
+
+const COLONNE_UTILISATEURS_NOMCOMPLET =
+    config.colonneNom;
+
+const TABLE_SESSION_UTILISATEUR =
+    config.tableSession;
+
+const COLONNE_SESSION_UTILISATEUR_CONTEXTE =
+    config.colonneContexte;
+
+// -----------------------------------------------------
+// Variables
+// -----------------------------------------------------
+
+const statusDiv = document.getElementById("status");
+
+let currentRecordId = null;
+let currentAttachmentId = null;
+let id_PKO = null;
+let id_AGENT = null;
+
+// -----------------------------------------------------
+// Widget
+// -----------------------------------------------------
+
+async function initialiserWidget() {
+
+    console.log("Initialisation widget");
+
+    if (typeof grist === "undefined") {
+        statusDiv.innerText = "API Grist introuvable";
+        return;
+    }
+
+    console.log("grist OK");
+
+    console.log("selectedTable =", grist.selectedTable);
+
+    grist.ready({
+        requiredAccess: "full",
+        allowSelectBy: true,
+        onEditOptions: function() {
+            document.getElementById('main-view').style.display = 'none';
+            document.getElementById('config-panel').style.display = 'block';
+        }
+    });
+
+    grist.onOptions(function(options) {
+        // Grist renvoie toutes les options enregistrées. Si elles existent, on les applique
+        if (options && options.maConfigPerso) {
+            maVariable = options.maConfigPerso;
+            
+            // Remplir le champ de saisie avec la valeur stockée pour que l'utilisateur la voie
+            document.getElementById('my-variable-input').value = maVariable;
+        }
+        
+        // Mettre à jour l'affichage de votre widget principal avec la variable rafraîchie
+        document.getElementById('display-var').innerText = maVariable;
+    });
+
+    document.getElementById('save-btn').addEventListener('click', async function() {
+        const nouvelleValeur = document.getElementById('my-variable-input').value;
+        
+        // Sauvegarde persistante directement dans Grist
+        await grist.setOption('maConfigPerso', nouvelleValeur);
+        
+        // Ré-afficher la vue principale et masquer la configuration
+        document.getElementById('config-panel').style.display = 'none';
+        document.getElementById('main-view').style.display = 'block';
+    });
+
+    
+    userEmail = setTimeout(async () => {
+
+            // appel de la fonction pour récupérer l'email de l'utilisateur
+            console.log("identification de l'utilisateur...");
+            
+            userEmail = await getUtilisateurEmail();
+
+            console.log("recherche de :", userEmail, " dans la table des utilisateurs...");
+
+            // recherche de l'utilisateur dans la table des utilisateurs
+            const contexte = await lireTable(TABLE_UTILISATEURS)
+
+            console.log("Contexte utilisateur :", contexte);
+
+            const utilisateur_trouve = contexte.find(({ row }) => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
+
+            console.log("Utilisateur actif :", utilisateur_trouve[COLONNE_UTILISATEURS_NOMCOMPLET]);
+
+            statusDiv.innerText = ("Bonjour " + utilisateur_trouve[COLONNE_UTILISATEURS_NOMCOMPLET]);
+
+            await chargerContexte(userEmail);
+
+            return userEmail;
+
+    }, 500);
+
+    // action à effectuer lorsque l'utilisateur sélectionne un enregistrement dans la table PKO
+
+    grist.onRecord(async (record) => {
+
+        console.log("Record reçu :", record);
+
+        currentRecordId = record.id;
+
+        // recherche de l'utilisateur dans la table des utilisateurs
+
+        const contexte = await lireTable(TABLE_UTILISATEURS)
+
+        console.log("Contexte utilisateur :", contexte);
+
+        const utilisateur_trouve = contexte.find(({ row }) => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
+
+        // mise à jour du contexte PKO dans la table des utilisateurs
+        console.log("Mise à jour du contexte PKO pour l'utilisateur :", utilisateur_trouve[COLONNE_UTILISATEURS_NOMCOMPLET]);
+        console.log("Contexte PKO actuel :", utilisateur_trouve[COLONNE_SESSION_UTILISATEUR_CONTEXTE]);
+        console.log("Contexte PKO à mettre à jour :", record.id);
+
+        if (utilisateur_trouve[COLONNE_SESSION_UTILISATEUR_CONTEXTE] !== record.id) {
+            console.log("ecriture contexte pko");
+            await grist.docApi.applyUserActions([
+                [
+                    "UpdateRecord",
+                    TABLE_UTILISATEURS,
+                    utilisateur_trouve.id,
+                    {
+                        [COLONNE_SESSION_UTILISATEUR_CONTEXTE]: record.id
+                    }
+                ]
+            ]);
+        }
+
+    });
+}
+
+
+// -----------------------------------------------------
+// identification utilisateur
+// -----------------------------------------------------
+
+async function getUtilisateurEmail() {
+  try {
+    // 1. Demander à Grist de créer une ligne vide dans notre table tampon
+    const nouvelleLigne = await grist.getTable(TABLE_SESSION_UTILISATEUR).create({ fields: {} });
+
+    // 2. Récupérer l'ID de la ligne créée
+    const rowId = nouvelleLigne.id;
+
+    // 3. Lire la ligne pour récupérer la valeur injectée par la formule Grist
+    const records = await lireTable(TABLE_SESSION_UTILISATEUR)
+
+    const session = records.find(r => r.id === rowId);
+
+    const emailUtilisateur = session.email;
+    
+    // 4. Nettoyer la table en supprimant la ligne temporaire
+    await grist.getTable(TABLE_SESSION_UTILISATEUR).destroy(rowId);
+    
+    // Vous avez maintenant le nom de l'utilisateur !
+    console.log("Utilisateur trouvé :", emailUtilisateur);
+    return emailUtilisateur;
+
+  } catch (error) {
+    console.error("Impossible de récupérer le nom d'utilisateur", error);
+    return null;
+  }
+}
+
+
+// -----------------------------------------------------
+// conversion table grist colonne -> lignes
+// -----------------------------------------------------
+
+function tableToRecords(tableData) {
+
+    const rows = [];
+
+    const rowCount =
+        tableData.id.length;
+
+    const columns =
+        Object.keys(tableData);
+
+    for (let i = 0; i < rowCount; i++) {
+
+        const row = {};
+
+        for (const column of columns) {
+            row[column] =
+                tableData[column][i];
+        }
+
+        rows.push(row);
+    }
+
+    return rows;
+}
+
+// -----------------------------------------------------
+// helper lecture des tables
+// -----------------------------------------------------
+
+async function lireTable(tableName) {
+
+    const tableData =
+        await grist.docApi.fetchTable(
+            tableName
+        );
+
+    const lignes = [];
+
+    const colonnes =
+        Object.keys(tableData);
+
+    const nbLignes =
+        tableData.id.length;
+
+    for (let i = 0; i < nbLignes; i++) {
+
+        const ligne = {};
+
+        for (const colonne of colonnes) {
+
+            ligne[colonne] =
+                tableData[colonne][i];
+        }
+
+        lignes.push(ligne);
+    }
+
+    return lignes;
+}
+
+// -----------------------------------------------------
+// Synchroniser le curseur sur la ligne en cours
+// -----------------------------------------------------
+
+async function chargerContexte(userEmail) {
+
+    const contexte = await lireTable(TABLE_UTILISATEURS)
+
+    const current_user = contexte.find(({ row }) => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
+
+    if (!current_user) return;
+
+    if (!current_user[COLONNE_SESSION_UTILISATEUR_CONTEXTE]) return;
+
+    await grist.setCursorPos({rowId: current_user[COLONNE_SESSION_UTILISATEUR_CONTEXTE]});
+}
+
+
+// -----------------------------------------------------
+// Démarrage
+// -----------------------------------------------------
+
+initialiserWidget();

@@ -54,29 +54,6 @@ async function initialiserWidget() {
         allowSelectBy: true
     });
 
-userEmail = setTimeout(async () => {
-
-            // appel de la fonction pour récupérer l'email de l'utilisateur
-            console.log("identification de l'utilisateur...");
-            
-            userEmail = await getUtilisateurEmail();
-
-            console.log("recherche de :", userEmail, " dans la table des utilisateurs...");
-
-            // recherche de l'utilisateur dans la table des utilisateurs
-            const contexte = await lireTable('Referentiel_utilisateurs')
-
-            console.log("Contexte utilisateur :", contexte);
-
-            const utilisateur_trouve = contexte.find(({ utilisateur_courriel }) => utilisateur_courriel === userEmail);
-
-            console.log("Utilisateur actif :", utilisateur_trouve.utilisateur_nomPrenom);
-
-            await chargerContexte(userEmail);
-
-            return userEmail;
-
-    }, 500);
 
     // action à effectuer lorsque l'utilisateur sélectionne un enregistrement dans la table PKO
     grist.onRecord(async (record) => {
@@ -139,33 +116,6 @@ userEmail = setTimeout(async () => {
             btn.disabled = true;
         }
 
-        // recherche de l'utilisateur dans la table des utilisateurs
-
-        const contexte = await lireTable('Referentiel_utilisateurs')
-
-        console.log("Contexte utilisateur :", contexte);
-
-        const utilisateur_trouve = contexte.find(({ utilisateur_courriel }) => utilisateur_courriel === userEmail);
-
-        // mise à jour du contexte PKO dans la table des utilisateurs
-        console.log("Mise à jour du contexte PKO pour l'utilisateur :", utilisateur_trouve.utilisateur_nomPrenom);
-        console.log("Contexte PKO actuel :", utilisateur_trouve.Contexte_PKO);
-        console.log("Contexte PKO à mettre à jour :", record.id);
-
-        if (utilisateur_trouve.Contexte_PKO !== record.id) {
-            console.log("ecriture contexte pko");
-            await grist.docApi.applyUserActions([
-                [
-                    "UpdateRecord",
-                    "Referentiel_utilisateurs",
-                    utilisateur_trouve.id,
-                    {
-                        Contexte_PKO: record.id
-                    }
-                ]
-            ]);
-        }
-
     });
 }
 
@@ -203,37 +153,6 @@ async function initPyodide() {
     console.log("Pyodide prêt");
 }
 
-// -----------------------------------------------------
-// identification utilisateur
-// -----------------------------------------------------
-
-async function getUtilisateurEmail() {
-  try {
-    // 1. Demander à Grist de créer une ligne vide dans notre table tampon
-    const nouvelleLigne = await grist.getTable('Session_utilisateur').create({ fields: {} });
-
-    // 2. Récupérer l'ID de la ligne créée
-    const rowId = nouvelleLigne.id;
-
-    // 3. Lire la ligne pour récupérer la valeur injectée par la formule Grist
-    const records = await lireTable('Session_utilisateur')
-
-    const session = records.find(r => r.id === rowId);
-
-    const emailUtilisateur = session.email;
-    
-    // 4. Nettoyer la table en supprimant la ligne temporaire
-    await grist.getTable('Session_utilisateur').destroy(rowId);
-    
-    // Vous avez maintenant le nom de l'utilisateur !
-    console.log("Utilisateur trouvé :", emailUtilisateur);
-    return emailUtilisateur;
-
-  } catch (error) {
-    console.error("Impossible de récupérer le nom d'utilisateur", error);
-    return null;
-  }
-}
 
 // -----------------------------------------------------
 // conversion table grist colonne -> lignes
@@ -298,6 +217,7 @@ async function lireTable(tableName) {
 
     return lignes;
 }
+
 // -----------------------------------------------------
 // Extraction
 // -----------------------------------------------------
@@ -573,23 +493,6 @@ async function executerExtraction() {
 
         btn.disabled = false;
     }
-}
-
-//
-// Aller à la page utilisateurs du pko
-//
-
-async function chargerContexte(userEmail) {
-
-    const contexte = await lireTable('Referentiel_utilisateurs')
-
-    const current_user = contexte.find(({ utilisateur_courriel }) => utilisateur_courriel === userEmail);
-
-    if (!current_user) return;
-
-    if (!current_user.Contexte_PKO) return;
-
-    await grist.setCursorPos({rowId: current_user.Contexte_PKO});
 }
 
 // -----------------------------------------------------
