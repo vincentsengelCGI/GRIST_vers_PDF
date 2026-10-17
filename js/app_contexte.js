@@ -47,24 +47,25 @@ async function initialiserWidget() {
         }
     });
     
-    userEmail =  setTimeout( async () => {
+    console.log("recherche email utilisateur...")
+    userEmail =  setTimeout( () => {
 
             // appel de la fonction pour récupérer l'email de l'utilisateur
             console.log("identification de l'utilisateur...");
             
-            pre_userEmail = await getUtilisateurEmail();
+            pre_userEmail = getUtilisateurEmail();
 
             console.log("recherche de :", pre_userEmail, " dans la table des utilisateurs...");
 
             // recherche de l'utilisateur dans la table des utilisateurs
-            const contexte = await lireTable(TABLE_UTILISATEURS)
+            const contexte = lireTable(TABLE_UTILISATEURS)
 
             console.log("Contexte utilisateur :", contexte);
 
             const utilisateur_trouve = contexte.find(row => row[COLONNE_UTILISATEURS_EMAIL] === pre_userEmail);
             console.log(utilisateur_trouve )
 
-            await chargerContexte(pre_userEmail);
+            chargerContexte(pre_userEmail);
 
             return pre_userEmail;
 
