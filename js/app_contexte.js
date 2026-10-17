@@ -4,7 +4,7 @@
 
 let TABLE_UTILISATEURS = "Referentiel_utilisateurs";
 let COLONNE_UTILISATEURS_EMAIL = "utilisateur_courriel";
-let COLONNE_UTILISATEURS_NOMCOMPLET = "utilisateur_nomPrenom)";
+let COLONNE_UTILISATEURS_NOMCOMPLET = "utilisateur_nomPrenom";
 let TABLE_SESSION_UTILISATEUR = "Session_utilisateur";
 let COLONNE_SESSION_UTILISATEUR_CONTEXTE = "???";
 
@@ -59,12 +59,12 @@ async function initialiserWidget() {
         // recherche de l'utilisateur dans la table des utilisateurs
         const contexte = await lireTable(TABLE_UTILISATEURS)
 
-        await console.log("Contexte utilisateur :", contexte);
+        console.log("Contexte utilisateur :", contexte);
 
         const utilisateur_trouve = contexte.find(row => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
-        await console.log(utilisateur_trouve[COLONNE_UTILISATEURS_NOMCOMPLET])
-
+        
         await chargerContexte(userEmail);
+        console.log(utilisateur_trouve[COLONNE_UTILISATEURS_NOMCOMPLET])
 
     }, 500);
 
