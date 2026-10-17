@@ -143,12 +143,14 @@ async function initialiserWidget() {
         console.log("Contexte utilisateur :", contexte);
 
         console.log("user email :", userEmail);
-        const utilisateur_trouve = await contexte.find(row => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
+        const utilisateur_trouve = contexte.find(row => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
 
         // mise à jour du contexte PKO dans la table des utilisateurs
         console.log("Contexte PKO à mettre à jour :", record.id);
         console.log(utilisateur_trouve);
         
+        const contexte_2 = await lireTable(TABLE_UTILISATEURS)
+
         if (utilisateur_trouve[COLONNE_SESSION_UTILISATEUR_CONTEXTE] !== record.id) {
             console.log("ecriture contexte pko");
             await grist.docApi.applyUserActions([
