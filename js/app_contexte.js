@@ -3,7 +3,7 @@
 // -----------------------------------------------------
 
 const TABLE_UTILISATEURS = "Referentiel_utilisateurs";
-const COLONNE_UTILISATEURS_EMAIL = "email";
+const COLONNE_UTILISATEURS_EMAIL = "utilisateur_courriel";
 const COLONNE_UTILISATEURS_NOMCOMPLET = "utilisateur_nomPrenom)";
 const TABLE_SESSION_UTILISATEUR = "Session_utilisateur";
 const COLONNE_SESSION_UTILISATEUR_CONTEXTE = "Contexte_PKO";
