@@ -141,6 +141,7 @@ async function initialiserWidget() {
 
         console.log("Contexte utilisateur :", contexte);
 
+        console.log("user email :", userEmail);
         const utilisateur_trouve = contexte.find(row => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
 
         // mise à jour du contexte PKO dans la table des utilisateurs
