@@ -52,20 +52,20 @@ async function initialiserWidget() {
             if (options.maConfigPerso) {
                 maVariable = options.maConfigPerso;
             }
-            if (options.cfg-nom-table-utilisateur) {
-                TABLE_UTILISATEURS = options.cfg-nom-table-utilisateur;
+            if (options.cfgNomTableUtilisateur) {
+                TABLE_UTILISATEURS = options.cfgNomTableUtilisateur;
             }
-            if (options.cfg-colonne-email) {
-                COLONNE_UTILISATEURS_EMAIL = options.cfg-colonne-email;
+            if (options.cfgColonneEmail) {
+                COLONNE_UTILISATEURS_EMAIL = options.cfgColonneEmail;
             }
-            if (options.cfg-colonne-nomcomplet-utilisateur) {
-                COLONNE_UTILISATEURS_NOMCOMPLET = options.cfg-colonne-nomcomplet-utilisateur;
+            if (options.cfgColonneNomcompletUtilisateur) {
+                COLONNE_UTILISATEURS_NOMCOMPLET = options.cfgColonneNomcompletUtilisateur;
             }
-            if (options.cfg-colonne-session) {
-                TABLE_SESSION_UTILISATEUR = options.cfg-colonne-session;
+            if (options.cfgColonneSession) {
+                TABLE_SESSION_UTILISATEUR = options.cfgColonneSession;
             }
-            if (options.cfg-colonne-contexte) {
-                COLONNE_SESSION_UTILISATEUR_CONTEXTE = options.cfg-colonne-contexte;
+            if (options.cfgColonneContexte) {
+                COLONNE_SESSION_UTILISATEUR_CONTEXTE = options.cfgColonneContexte;
             }
             
                 // Remplir le champ de saisie avec la valeur stockée pour que l'utilisateur la voie
@@ -91,11 +91,11 @@ async function initialiserWidget() {
         
         // Sauvegarde persistante directement dans Grist
         await grist.setOption('maConfigPerso', nouvelleValeur);
-        await grist.setOption('cfg-nom-table-utilisateur', new_TABLE_UTILISATEURS);
-        await grist.setOption('cfg-colonne-email', new_COLONNE_UTILISATEURS_EMAIL);
-        await grist.setOption('cfg-colonne-nomcomplet-utilisateur', new_COLONNE_UTILISATEURS_NOMCOMPLET);
-        await grist.setOption('cfg-colonne-session', new_TABLE_SESSION_UTILISATEUR);
-        await grist.setOption('mcolonne-contexte', new_COLONNE_SESSION_UTILISATEUR_CONTEXTE);
+        await grist.setOption('cfgNomTableUtilisateur', new_TABLE_UTILISATEURS);
+        await grist.setOption('cfgColonneEmail', new_COLONNE_UTILISATEURS_EMAIL);
+        await grist.setOption('cfgColonneNomcompletUtilisateur', new_COLONNE_UTILISATEURS_NOMCOMPLET);
+        await grist.setOption('cfgColonneSession', new_TABLE_SESSION_UTILISATEUR);
+        await grist.setOption('cfgColonneContexte', new_COLONNE_SESSION_UTILISATEUR_CONTEXTE);
 
         
         // Ré-afficher la vue principale et masquer la configuration
