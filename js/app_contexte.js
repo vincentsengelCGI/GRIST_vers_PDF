@@ -19,6 +19,7 @@ let currentAttachmentId = null;
 let id_PKO = null;
 let id_AGENT = null;
 let maVariable = null;
+let userEmail = null;
 
 // -----------------------------------------------------
 // Widget
