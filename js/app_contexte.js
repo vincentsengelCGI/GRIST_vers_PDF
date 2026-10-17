@@ -85,7 +85,7 @@ async function initialiserWidget() {
 
             console.log("Contexte utilisateur :", contexte);
 
-            const utilisateur_trouve = contexte.find(({ row }) => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
+            const utilisateur_trouve = contexte.find(row => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
 
             console.log("Utilisateur actif :", utilisateur_trouve[COLONNE_UTILISATEURS_NOMCOMPLET]);
 
@@ -111,7 +111,7 @@ async function initialiserWidget() {
 
         console.log("Contexte utilisateur :", contexte);
 
-        const utilisateur_trouve = contexte.find(({ row }) => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
+        const utilisateur_trouve = contexte.find(row => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
 
         // mise à jour du contexte PKO dans la table des utilisateurs
         console.log("Mise à jour du contexte PKO pour l'utilisateur :", utilisateur_trouve[COLONNE_UTILISATEURS_NOMCOMPLET]);
@@ -241,7 +241,7 @@ async function chargerContexte(userEmail) {
 
     const contexte = await lireTable(TABLE_UTILISATEURS)
 
-    const current_user = contexte.find(({ row }) => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
+    const current_user = contexte.find(row => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
 
     if (!current_user) return;
 
