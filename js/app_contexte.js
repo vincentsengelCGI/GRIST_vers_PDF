@@ -86,6 +86,7 @@ async function initialiserWidget() {
             console.log("Contexte utilisateur :", contexte);
 
             const utilisateur_trouve = contexte.find(row => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
+            console.log(utilisateur_trouve )
 
             statusDiv.innerText = ("Bonjour " + utilisateur_trouve[COLONNE_UTILISATEURS_NOMCOMPLET]);
 
