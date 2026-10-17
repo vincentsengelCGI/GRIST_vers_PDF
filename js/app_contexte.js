@@ -45,6 +45,29 @@ async function initialiserWidget() {
             document.getElementById('config-panel').style.display = 'block';
         }
     });
+    
+    userEmail = setTimeout(async () => {
+
+            // appel de la fonction pour récupérer l'email de l'utilisateur
+            console.log("identification de l'utilisateur...");
+            
+            userEmail = await getUtilisateurEmail();
+
+            console.log("recherche de :", userEmail, " dans la table des utilisateurs...");
+
+            // recherche de l'utilisateur dans la table des utilisateurs
+            const contexte = await lireTable(TABLE_UTILISATEURS)
+
+            console.log("Contexte utilisateur :", contexte);
+
+            const utilisateur_trouve = contexte.find(row => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
+            console.log(utilisateur_trouve )
+
+            await chargerContexte(userEmail);
+
+            return userEmail;
+
+    }, 500);
 
     grist.onOptions(function(options) {
         if (options) {
@@ -103,29 +126,6 @@ async function initialiserWidget() {
         document.getElementById('main-view').style.display = 'block';
     });
 
-    
-    userEmail = setTimeout(async () => {
-
-            // appel de la fonction pour récupérer l'email de l'utilisateur
-            console.log("identification de l'utilisateur...");
-            
-            userEmail = await getUtilisateurEmail();
-
-            console.log("recherche de :", userEmail, " dans la table des utilisateurs...");
-
-            // recherche de l'utilisateur dans la table des utilisateurs
-            const contexte = await lireTable(TABLE_UTILISATEURS)
-
-            console.log("Contexte utilisateur :", contexte);
-
-            const utilisateur_trouve = contexte.find(row => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
-            console.log(utilisateur_trouve )
-
-            await chargerContexte(userEmail);
-
-            return userEmail;
-
-    }, 500);
 
     // action à effectuer lorsque l'utilisateur sélectionne un enregistrement dans la table PKO
 
