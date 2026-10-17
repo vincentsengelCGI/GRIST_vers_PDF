@@ -46,7 +46,7 @@ async function initialiserWidget() {
         }
     });
     
-    userEmail = setTimeout(async () => {
+    userEmail =  setTimeout( async () => {
 
             // appel de la fonction pour récupérer l'email de l'utilisateur
             console.log("identification de l'utilisateur...");
@@ -144,7 +144,7 @@ async function initialiserWidget() {
         console.log("Contexte utilisateur :", contexte);
 
         console.log("user email :", userEmail);
-        const utilisateur_trouve = contexte.find(row => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
+        const utilisateur_trouve = await contexte.find(row => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
 
         // mise à jour du contexte PKO dans la table des utilisateurs
         console.log("Contexte PKO à mettre à jour :", record.id);
@@ -277,7 +277,7 @@ async function chargerContexte(userEmail) {
 
     const contexte = await lireTable(TABLE_UTILISATEURS)
 
-    const current_user = contexte.find(row => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
+    const current_user = await contexte.find(row => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
 
     if (!current_user) return;
 
