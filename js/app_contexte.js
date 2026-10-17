@@ -46,28 +46,26 @@ async function initialiserWidget() {
             document.getElementById('config-panel').style.display = 'block';
         }
     });
+
+    // appel de la fonction pour récupérer l'email de l'utilisateur
+    console.log("identification de l'utilisateur...");
+    userEmail = await getUtilisateurEmail();
     
     console.log("recherche email utilisateur...")
-    userEmail =  setTimeout( () => {
+    setTimeout( async () => {
 
-            // appel de la fonction pour récupérer l'email de l'utilisateur
-            console.log("identification de l'utilisateur...");
-            
-            pre_userEmail = getUtilisateurEmail();
-
-            console.log("recherche de :", pre_userEmail, " dans la table des utilisateurs...");
+        
+        console.log("recherche de :", userEmail, " dans la table des utilisateurs...");
 
             // recherche de l'utilisateur dans la table des utilisateurs
             const contexte = lireTable(TABLE_UTILISATEURS)
 
             console.log("Contexte utilisateur :", contexte);
 
-            const utilisateur_trouve = contexte.find(row => row[COLONNE_UTILISATEURS_EMAIL] === pre_userEmail);
-            console.log(utilisateur_trouve )
+            const utilisateur_trouve = contexte.find(row => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
+            console.log(utilisateur_trouve[COLONNE_UTILISATEURS_NOMCOMPLET])
 
-            chargerContexte(pre_userEmail);
-
-            return pre_userEmail;
+            chargerContexte(userEmail);
 
     }, 500);
 
