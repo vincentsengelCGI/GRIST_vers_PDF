@@ -2,9 +2,8 @@
 // Configuration
 // -----------------------------------------------------
 
-
 const TABLE_UTILISATEURS = "Referentiel_utilisateurs";
-const COLONNE_UTILISATEURS_EMAIL = "COLONNE_UTILISATEURS_EMAIL";
+const COLONNE_UTILISATEURS_EMAIL = "email";
 const COLONNE_UTILISATEURS_NOMCOMPLET = "utilisateur_nomPrenom)";
 const TABLE_SESSION_UTILISATEUR = "Session_utilisateur";
 const COLONNE_SESSION_UTILISATEUR_CONTEXTE = "Contexte_PKO";
@@ -19,6 +18,7 @@ let currentRecordId = null;
 let currentAttachmentId = null;
 let id_PKO = null;
 let id_AGENT = null;
+let maVariable = null;
 
 // -----------------------------------------------------
 // Widget
