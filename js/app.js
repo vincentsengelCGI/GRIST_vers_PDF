@@ -14,6 +14,7 @@ let TABLE_UTILISATEURS = "Referentiel_utilisateurs";
 let COLONNE_UTILISATEURS_EMAIL = "utilisateur_courriel";
 let COLONNE_UTILISATEURS_NOMCOMPLET = "utilisateur_nomPrenom";
 let TABLE_SESSION_UTILISATEUR = "Session_utilisateur";
+let COLONNE_UTILISATEURS_ACADEMIE = "Academie";
 
 let pyodide = null;
 
@@ -32,6 +33,7 @@ let currentRecordId = null;
 let currentAttachmentId = null;
 let id_PKO = null;
 let id_utilisateur = null;
+let aca_utilisateur = null;
 
 // -----------------------------------------------------
 // Widget
@@ -78,6 +80,9 @@ async function initialiserWidget() {
             if (options.cfgColonneNomcompletUtilisateur) {
                 COLONNE_UTILISATEURS_NOMCOMPLET = options.cfgColonneNomcompletUtilisateur;
             }
+            if (options.cfgColonneAcademieUtilisateur) {
+                COLONNE_UTILISATEURS_ACADEMIE = options.cfgColonneAcademieUtilisateur;
+            }
             if (options.cfgColonneSession) {
                 TABLE_SESSION_UTILISATEUR = options.cfgColonneSession;
             }
@@ -86,6 +91,7 @@ async function initialiserWidget() {
             document.getElementById('table-utilisateur').value = TABLE_UTILISATEURS;
             document.getElementById('colonne-email').value = COLONNE_UTILISATEURS_EMAIL;
             document.getElementById('colonne-nom-complet').value = COLONNE_UTILISATEURS_NOMCOMPLET;
+            document.getElementById('colonne-academie').value = COLONNE_UTILISATEURS_ACADEMIE;
             document.getElementById('table-session').value = TABLE_SESSION_UTILISATEUR;
         }
         
@@ -109,6 +115,7 @@ async function initialiserWidget() {
         console.log(utilisateur_trouve[COLONNE_UTILISATEURS_NOMCOMPLET])
 
         id_utilisateur = utilisateur_trouve.id
+        aca_utilisateur = utilisateur_trouve[COLONNE_UTILISATEURS_ACADEMIE]
         console.log("id utilisateur trouvé : ")
         console.log(utilisateur_trouve[COLONNE_UTILISATEURS_NOMCOMPLET])
 
@@ -119,12 +126,14 @@ async function initialiserWidget() {
         const new_TABLE_UTILISATEURS = document.getElementById('table-utilisateur').value;
         const new_COLONNE_UTILISATEURS_EMAIL = document.getElementById('colonne-email').value;
         const new_COLONNE_UTILISATEURS_NOMCOMPLET = document.getElementById('colonne-nom-complet').value;
+        const new_COLONNE_UTILISATEURS_ACADEMIE = document.getElementById('colonne-academie').value;
         const new_TABLE_SESSION_UTILISATEUR = document.getElementById('table-session').value;
         
         // Sauvegarde persistante directement dans Grist
         await grist.setOption('cfgNomTableUtilisateur', new_TABLE_UTILISATEURS);
         await grist.setOption('cfgColonneEmail', new_COLONNE_UTILISATEURS_EMAIL);
         await grist.setOption('cfgColonneNomcompletUtilisateur', new_COLONNE_UTILISATEURS_NOMCOMPLET);
+        await grist.setOption('cfgColonneAcademieUtilisateur', new_COLONNE_UTILISATEURS_ACADEMIE);
         await grist.setOption('cfgColonneSession', new_TABLE_SESSION_UTILISATEUR);
 
         
@@ -401,6 +410,11 @@ async function executerExtraction() {
         pyodide.globals.set(
             "pdf_pages",
             agents
+        );
+
+        pyodide.globals.set(
+            "utilisateur_id",
+            id_utilisateur
         );
 
         const pagesJson =
