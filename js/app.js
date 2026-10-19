@@ -69,9 +69,6 @@ async function initialiserWidget() {
         console.log("chargement des options")
         if (options) {
         // Grist renvoie toutes les options enregistrées. Si elles existent, on les applique
-            if (options.maConfigPerso) {
-                maVariable = options.maConfigPerso;
-            }
             if (options.cfgNomTableUtilisateur) {
                 TABLE_UTILISATEURS = options.cfgNomTableUtilisateur;
             }
@@ -83,9 +80,6 @@ async function initialiserWidget() {
             }
             if (options.cfgColonneSession) {
                 TABLE_SESSION_UTILISATEUR = options.cfgColonneSession;
-            }
-            if (options.cfgColonneContexte) {
-                COLONNE_SESSION_UTILISATEUR_CONTEXTE = options.cfgColonneContexte;
             }
             
             // Remplir le champ de saisie avec la valeur stockée pour que l'utilisateur la voie
@@ -126,14 +120,12 @@ async function initialiserWidget() {
         const new_COLONNE_UTILISATEURS_EMAIL = document.getElementById('colonne-email').value;
         const new_COLONNE_UTILISATEURS_NOMCOMPLET = document.getElementById('colonne-nom-complet').value;
         const new_TABLE_SESSION_UTILISATEUR = document.getElementById('table-session').value;
-        const new_COLONNE_SESSION_UTILISATEUR_CONTEXTE = document.getElementById('colonne-contexte').value;
         
         // Sauvegarde persistante directement dans Grist
         await grist.setOption('cfgNomTableUtilisateur', new_TABLE_UTILISATEURS);
         await grist.setOption('cfgColonneEmail', new_COLONNE_UTILISATEURS_EMAIL);
         await grist.setOption('cfgColonneNomcompletUtilisateur', new_COLONNE_UTILISATEURS_NOMCOMPLET);
         await grist.setOption('cfgColonneSession', new_TABLE_SESSION_UTILISATEUR);
-        await grist.setOption('cfgColonneContexte', new_COLONNE_SESSION_UTILISATEUR_CONTEXTE);
 
         
         // Ré-afficher la vue principale et masquer la configuration
