@@ -10,6 +10,11 @@ const TABLE_PKO = "PKO";
 const TABLE_PKO_PAGES = "PKO_Pages";
 const TABLE_INDUS = "Indus";
 
+let TABLE_UTILISATEURS = "Referentiel_utilisateurs";
+let COLONNE_UTILISATEURS_EMAIL = "utilisateur_courriel";
+let COLONNE_UTILISATEURS_NOMCOMPLET = "utilisateur_nomPrenom";
+let TABLE_SESSION_UTILISATEUR = "Session_utilisateur";
+
 let pyodide = null;
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
@@ -26,6 +31,7 @@ const fileInfoDiv = document.getElementById("file-info");
 let currentRecordId = null;
 let currentAttachmentId = null;
 let id_PKO = null;
+let id_utilisateur = null;
 
 // -----------------------------------------------------
 // Widget
@@ -52,6 +58,82 @@ async function initialiserWidget() {
     grist.ready({
         requiredAccess: "full",
         allowSelectBy: true
+    });
+
+    
+    grist.onOptions(function(options) {
+        console.log("chargement des options")
+        if (options) {
+        // Grist renvoie toutes les options enregistrées. Si elles existent, on les applique
+            if (options.maConfigPerso) {
+                maVariable = options.maConfigPerso;
+            }
+            if (options.cfgNomTableUtilisateur) {
+                TABLE_UTILISATEURS = options.cfgNomTableUtilisateur;
+            }
+            if (options.cfgColonneEmail) {
+                COLONNE_UTILISATEURS_EMAIL = options.cfgColonneEmail;
+            }
+            if (options.cfgColonneNomcompletUtilisateur) {
+                COLONNE_UTILISATEURS_NOMCOMPLET = options.cfgColonneNomcompletUtilisateur;
+            }
+            if (options.cfgColonneSession) {
+                TABLE_SESSION_UTILISATEUR = options.cfgColonneSession;
+            }
+            if (options.cfgColonneContexte) {
+                COLONNE_SESSION_UTILISATEUR_CONTEXTE = options.cfgColonneContexte;
+            }
+            
+                // Remplir le champ de saisie avec la valeur stockée pour que l'utilisateur la voie
+                document.getElementById('table-utilisateur').value = TABLE_UTILISATEURS;
+                document.getElementById('colonne-email').value = COLONNE_UTILISATEURS_EMAIL;
+                document.getElementById('colonne-nom-complet').value = COLONNE_UTILISATEURS_NOMCOMPLET;
+                document.getElementById('table-session').value = TABLE_SESSION_UTILISATEUR;
+            }
+        
+    });
+
+    // appel de la fonction pour récupérer l'email de l'utilisateur
+    console.log("identification de l'utilisateur...");
+    userEmail = await getUtilisateurEmail();
+    
+    console.log("recherche email utilisateur...")
+    setTimeout( async () => {
+
+        console.log("recherche de :", userEmail, " dans la table des utilisateurs...");
+
+        // recherche de l'utilisateur dans la table des utilisateurs
+        const contexte = await lireTable(TABLE_UTILISATEURS)
+
+        console.log("Contexte utilisateur :", contexte);
+
+        const utilisateur_trouve = contexte.find(row => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
+        
+        console.log(utilisateur_trouve[COLONNE_UTILISATEURS_NOMCOMPLET])
+
+        id_utilisateur = utilisateur_trouve.id
+
+    }, 500);
+
+
+    document.getElementById('save-btn').addEventListener('click', async function() {
+        const new_TABLE_UTILISATEURS = document.getElementById('table-utilisateur').value;
+        const new_COLONNE_UTILISATEURS_EMAIL = document.getElementById('colonne-email').value;
+        const new_COLONNE_UTILISATEURS_NOMCOMPLET = document.getElementById('colonne-nom-complet').value;
+        const new_TABLE_SESSION_UTILISATEUR = document.getElementById('table-session').value;
+        const new_COLONNE_SESSION_UTILISATEUR_CONTEXTE = document.getElementById('colonne-contexte').value;
+        
+        // Sauvegarde persistante directement dans Grist
+        await grist.setOption('cfgNomTableUtilisateur', new_TABLE_UTILISATEURS);
+        await grist.setOption('cfgColonneEmail', new_COLONNE_UTILISATEURS_EMAIL);
+        await grist.setOption('cfgColonneNomcompletUtilisateur', new_COLONNE_UTILISATEURS_NOMCOMPLET);
+        await grist.setOption('cfgColonneSession', new_TABLE_SESSION_UTILISATEUR);
+        await grist.setOption('cfgColonneContexte', new_COLONNE_SESSION_UTILISATEUR_CONTEXTE);
+
+        
+        // Ré-afficher la vue principale et masquer la configuration
+        document.getElementById('config-panel').style.display = 'none';
+        document.getElementById('main-view').style.display = 'block';
     });
 
 
@@ -117,6 +199,8 @@ async function initialiserWidget() {
         }
 
     });
+
+    return "chat"
 }
 
 // ---------------------------------------------    --------
@@ -181,6 +265,38 @@ function tableToRecords(tableData) {
     }
 
     return rows;
+}
+
+// -----------------------------------------------------
+// identification utilisateur
+// -----------------------------------------------------
+
+async function getUtilisateurEmail() {
+  try {
+    // 1. Demander à Grist de créer une ligne vide dans notre table tampon
+    const nouvelleLigne = await grist.getTable(TABLE_SESSION_UTILISATEUR).create({ fields: {} });
+
+    // 2. Récupérer l'ID de la ligne créée
+    const rowId = nouvelleLigne.id;
+
+    // 3. Lire la ligne pour récupérer la valeur injectée par la formule Grist
+    const records = await lireTable(TABLE_SESSION_UTILISATEUR)
+
+    const session = records.find(r => r.id === rowId);
+
+    const emailUtilisateur = session.email;
+    
+    // 4. Nettoyer la table en supprimant la ligne temporaire
+    await grist.getTable(TABLE_SESSION_UTILISATEUR).destroy(rowId);
+    
+    // Vous avez maintenant le nom de l'utilisateur !
+    console.log("Utilisateur trouvé :", emailUtilisateur);
+    return emailUtilisateur;
+
+  } catch (error) {
+    console.error("Impossible de récupérer le nom d'utilisateur", error);
+    return null;
+  }
 }
 
 // -----------------------------------------------------
