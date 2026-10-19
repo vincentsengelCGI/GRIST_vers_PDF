@@ -102,7 +102,9 @@ async function initialiserWidget() {
 
         console.log("recherche de :", userEmail, " dans la table des utilisateurs...");
 
-        // recherche de l'utilisateur dans la table des utilisateurs        const contexte = await lireTable(TABLE_UTILISATEURS)
+        // recherche de l'utilisateur dans la table des utilisateurs
+        
+        const contexte = await lireTable(TABLE_UTILISATEURS)
 
         const utilisateur_trouve = contexte.find(row => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
         
