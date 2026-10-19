@@ -117,7 +117,7 @@ async function initialiserWidget() {
         id_utilisateur = utilisateur_trouve.id
         aca_utilisateur = utilisateur_trouve[COLONNE_UTILISATEURS_ACADEMIE]
         console.log("id utilisateur trouvé : ")
-        console.log(utilisateur_trouve[COLONNE_UTILISATEURS_NOMCOMPLET])
+        console.log(utilisateur_trouve[COLONNE_UTILISATEURS_ACADEMIE])
 
     }, 500);
 
@@ -413,15 +413,16 @@ async function executerExtraction() {
         );
 
         pyodide.globals.set(
-            "utilisateur_id",
-            id_utilisateur
+            "utilisateur_aca",
+            aca_utilisateur
         );
 
         const pagesJson =
             await pyodide.runPythonAsync(`
         construire_pages_pko(
             pko_id,
-            pdf_pages
+            pdf_pages,
+            utilisateur_aca
         )
         `);
 

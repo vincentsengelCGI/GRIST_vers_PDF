@@ -1,7 +1,7 @@
 # parser.py
 import json
 
-def construire_pages_pko(pko_id, pages):
+def construire_pages_pko(pko_id, pages, aca):
 
     resultat = []
 
@@ -13,7 +13,8 @@ def construire_pages_pko(pko_id, pages):
         resultat.append({
             "PKO_id": pko_id,
             "numero_page_pko": numero_page,
-            "contenu_pagepko": contenu
+            "contenu_pagepko": contenu,
+            "academie" : aca
         })
 
     return json.dumps(resultat)

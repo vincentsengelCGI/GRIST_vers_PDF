@@ -51,9 +51,6 @@ async function initialiserWidget() {
         console.log("chargement des options")
         if (options) {
         // Grist renvoie toutes les options enregistrées. Si elles existent, on les applique
-            if (options.maConfigPerso) {
-                maVariable = options.maConfigPerso;
-            }
             if (options.cfgNomTableUtilisateur) {
                 TABLE_UTILISATEURS = options.cfgNomTableUtilisateur;
             }
@@ -71,7 +68,6 @@ async function initialiserWidget() {
             }
             
                 // Remplir le champ de saisie avec la valeur stockée pour que l'utilisateur la voie
-                document.getElementById('my-variable-input').value = maVariable;
                 document.getElementById('table-utilisateur').value = TABLE_UTILISATEURS;
                 document.getElementById('colonne-email').value = COLONNE_UTILISATEURS_EMAIL;
                 document.getElementById('colonne-nom-complet').value = COLONNE_UTILISATEURS_NOMCOMPLET;
@@ -80,7 +76,7 @@ async function initialiserWidget() {
             }
         
     });
-    
+
     // appel de la fonction pour récupérer l'email de l'utilisateur
     console.log("identification de l'utilisateur...");
     userEmail = await getUtilisateurEmail();
@@ -108,7 +104,6 @@ async function initialiserWidget() {
     document.getElementById('display-var').innerText = maVariable;
 
     document.getElementById('save-btn').addEventListener('click', async function() {
-        const nouvelleValeur = document.getElementById('my-variable-input').value;
         const new_TABLE_UTILISATEURS = document.getElementById('table-utilisateur').value;
         const new_COLONNE_UTILISATEURS_EMAIL = document.getElementById('colonne-email').value;
         const new_COLONNE_UTILISATEURS_NOMCOMPLET = document.getElementById('colonne-nom-complet').value;
@@ -116,7 +111,6 @@ async function initialiserWidget() {
         const new_COLONNE_SESSION_UTILISATEUR_CONTEXTE = document.getElementById('colonne-contexte').value;
         
         // Sauvegarde persistante directement dans Grist
-        await grist.setOption('maConfigPerso', nouvelleValeur);
         await grist.setOption('cfgNomTableUtilisateur', new_TABLE_UTILISATEURS);
         await grist.setOption('cfgColonneEmail', new_COLONNE_UTILISATEURS_EMAIL);
         await grist.setOption('cfgColonneNomcompletUtilisateur', new_COLONNE_UTILISATEURS_NOMCOMPLET);
