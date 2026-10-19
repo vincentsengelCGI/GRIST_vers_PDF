@@ -57,7 +57,11 @@ async function initialiserWidget() {
 
     grist.ready({
         requiredAccess: "full",
-        allowSelectBy: true
+        allowSelectBy: true,
+        onEditOptions: function() {
+            document.getElementById('main-view').style.display = 'none';
+            document.getElementById('config-panel').style.display = 'block';
+        }
     });
 
     
@@ -84,12 +88,12 @@ async function initialiserWidget() {
                 COLONNE_SESSION_UTILISATEUR_CONTEXTE = options.cfgColonneContexte;
             }
             
-                // Remplir le champ de saisie avec la valeur stockée pour que l'utilisateur la voie
-                document.getElementById('table-utilisateur').value = TABLE_UTILISATEURS;
-                document.getElementById('colonne-email').value = COLONNE_UTILISATEURS_EMAIL;
-                document.getElementById('colonne-nom-complet').value = COLONNE_UTILISATEURS_NOMCOMPLET;
-                document.getElementById('table-session').value = TABLE_SESSION_UTILISATEUR;
-            }
+            // Remplir le champ de saisie avec la valeur stockée pour que l'utilisateur la voie
+            document.getElementById('table-utilisateur').value = TABLE_UTILISATEURS;
+            document.getElementById('colonne-email').value = COLONNE_UTILISATEURS_EMAIL;
+            document.getElementById('colonne-nom-complet').value = COLONNE_UTILISATEURS_NOMCOMPLET;
+            document.getElementById('table-session').value = TABLE_SESSION_UTILISATEUR;
+        }
         
     });
 
