@@ -599,12 +599,19 @@ async function executerExtraction() {
         statusDiv.innerText =
             "lignes indus créés";
 
-
         console.log("valeurLigneFin:", valeurLigneFin);
-
-        await grist.setCursorPos({rowId: valeurLigneFin});
-
-        console.log("curseur bougé")
+        
+        console.log("ecriture vers contexte pko");
+        await grist.docApi.applyUserActions([
+            [
+                "UpdateRecord",
+                TABLE_UTILISATEURS,
+                id_utilisateur,
+                {
+                    [COLONNE_SESSION_UTILISATEUR_CONTEXTE]: valeurLigneFin
+                }
+            ]
+        ]);
 
     }
     

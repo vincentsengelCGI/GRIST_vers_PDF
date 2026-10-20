@@ -15,11 +15,11 @@ let COLONNE_SESSION_UTILISATEUR_CONTEXTE = "???";
 const statusDiv = document.getElementById("status");
 
 let currentRecordId = null;
-let currentAttachmentId = null;
-let id_PKO = null;
-let id_AGENT = null;
-let maVariable = null;
+let lastRecordId = null;
 let userEmail = null;
+let dernierCurseurPko = null;
+let dernierContextePko = null;
+
 
 // -----------------------------------------------------
 // Widget
@@ -132,6 +132,7 @@ async function initialiserWidget() {
 
         currentRecordId = record.id;
 
+        
         // recherche de l'utilisateur dans la table des utilisateurs
 
         const contexte = await lireTable(TABLE_UTILISATEURS)
@@ -160,10 +161,30 @@ async function initialiserWidget() {
                     }
                 ]
             ]);
+            dernierCurseurPko = record.id;
         }
 
     });
 }
+
+grist.onRecords(async () => {
+
+    const contextePko = await user_actuel_contexte(userEmail);
+
+    if (
+        contextePko &&
+        contextePko !== dernierCurseurPko &&
+        contextePko !== dernierContextePko
+    ) {
+
+        dernierContextePko = contextePko;
+
+        await grist.setCursorPos({
+            rowId: contextePko
+        });
+    }
+
+});
 
 
 // -----------------------------------------------------
@@ -268,16 +289,22 @@ async function lireTable(tableName) {
 // -----------------------------------------------------
 
 async function chargerContexte(userEmail) {
-
-    const contexte = await lireTable(TABLE_UTILISATEURS)
-
-    const current_user = contexte.find(row => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
+    const current_user = user_actuel_contexte(userEmail);
 
     if (!current_user) return;
 
     if (!current_user[COLONNE_SESSION_UTILISATEUR_CONTEXTE]) return;
 
     await grist.setCursorPos({rowId: current_user[COLONNE_SESSION_UTILISATEUR_CONTEXTE]});
+}
+
+async function user_actuel_contexte(userEmail) {
+    
+    const contexte = await lireTable(TABLE_UTILISATEURS)
+
+    const current_user = contexte.find(row => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
+
+    return current_user
 }
 
 
