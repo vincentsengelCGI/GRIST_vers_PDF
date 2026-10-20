@@ -126,6 +126,10 @@ async function initialiserWidget() {
 
         await chargerContexte();
 
+        console.log(
+            "INITIALISATION TERMINEE"
+        );
+
         grist.onRecord(
             onSelectionRecord
         );
@@ -172,7 +176,33 @@ function chargerOptions() {
                 || TABLE_SESSION_UTILISATEUR;
 
         }
+        
     );
+
+    document.getElementById(
+        "table-utilisateur"
+    ).value =
+        TABLE_UTILISATEURS;
+
+    document.getElementById(
+        "colonne-email"
+    ).value =
+        COLONNE_UTILISATEURS_EMAIL;
+
+    document.getElementById(
+        "colonne-nom-complet"
+    ).value =
+        COLONNE_UTILISATEURS_NOMCOMPLET;
+
+    document.getElementById(
+        "colonne-contexte"
+    ).value =
+        COLONNE_SESSION_UTILISATEUR_CONTEXTE;
+
+    document.getElementById(
+        "table-session-utilisateur"
+    ).value =
+        TABLE_SESSION_UTILISATEUR;
 
 }
 
@@ -385,6 +415,9 @@ async function getUtilisateurCourant() {
 // =====================================================
 
 async function getUtilisateurEmail() {
+    console.log(
+        "CREATE SESSION ROW"
+    );
 
       try {
     // 1. Demander à Grist de créer une ligne vide dans notre table tampon
@@ -400,6 +433,10 @@ async function getUtilisateurEmail() {
 
     const emailUtilisateur = session.email;
     
+    console.log(
+    "DESTROY SESSION ROW"
+    );
+
     // 4. Nettoyer la table en supprimant la ligne temporaire
     await grist.getTable(TABLE_SESSION_UTILISATEUR).destroy(rowId);
     
