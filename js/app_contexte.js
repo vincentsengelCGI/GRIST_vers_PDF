@@ -412,7 +412,7 @@ async function getUtilisateurCourant() {
 
     );
 
-    console.log("Utilisateur courant : ", utilisateur_courant);
+    console.log("> Utilisateur courant : ", utilisateur_courant);
 
     return utilisateur_courant
 
