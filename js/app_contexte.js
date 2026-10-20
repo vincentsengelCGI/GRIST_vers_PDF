@@ -381,6 +381,13 @@ async function mettreAJourContexte(
             ]
         ]);
 
+    console.log(
+        "UDATE STATE UTILISATEUR",
+        utilisateur[
+        COLONNE_SESSION_UTILISATEUR_CONTEXTE
+        ] = rowId
+    );
+
     state.utilisateur[
         COLONNE_SESSION_UTILISATEUR_CONTEXTE
     ] = rowId;
