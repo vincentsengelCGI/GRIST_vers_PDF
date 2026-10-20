@@ -203,6 +203,8 @@ grist.onOptions((options) => {
            
 });
 
+}
+
 async function sauvegarderOptions() {
 
     await grist.setOption(
