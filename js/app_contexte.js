@@ -382,10 +382,7 @@ async function mettreAJourContexte(
         ]);
 
     console.log(
-        "UDATE STATE UTILISATEUR",
-        utilisateur[
-        COLONNE_SESSION_UTILISATEUR_CONTEXTE
-        ] = rowId
+        "UDATE STATE UTILISATEUR"
     );
 
     state.utilisateur[
@@ -405,7 +402,7 @@ async function getUtilisateurCourant() {
             TABLE_UTILISATEURS
         );
 
-    return utilisateurs.find(
+    const utilisateur_courant = utilisateurs.find(
 
         utilisateur =>
 
@@ -414,6 +411,10 @@ async function getUtilisateurCourant() {
             ] === state.userEmail
 
     );
+
+    console.log("Utilisateur courant : ", utilisateur_courant);
+
+    return utilisateur_courant
 
 }
 
