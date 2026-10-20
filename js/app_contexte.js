@@ -100,9 +100,6 @@ async function initialiserWidget() {
 
     console.log(userEmail);
 
-
-    document.getElementById('display-var').innerText = maVariable;
-
     document.getElementById('save-btn').addEventListener('click', async function() {
         const new_TABLE_UTILISATEURS = document.getElementById('table-utilisateur').value;
         const new_COLONNE_UTILISATEURS_EMAIL = document.getElementById('colonne-email').value;
