@@ -133,6 +133,8 @@ async function initialiserWidget() {
         grist.onRecord(
             onSelectionRecord
         );
+        
+        console.log("Fin onRecord");
 
     } catch (error) {
 
@@ -148,36 +150,31 @@ async function initialiserWidget() {
 
 function chargerOptions() {
 
-    grist.onOptions(
-        (options) => {
+grist.onOptions((options) => {
 
-            if (!options) {
-                return;
-            }
+    if (!options) {
+        return;
+    }
 
-            TABLE_UTILISATEURS =
-                options.cfgNomTableUtilisateur
-                || TABLE_UTILISATEURS;
+    TABLE_UTILISATEURS =
+        options.cfgNomTableUtilisateur
+        || TABLE_UTILISATEURS;
 
-            COLONNE_UTILISATEURS_EMAIL =
-                options.cfgColonneEmail
-                || COLONNE_UTILISATEURS_EMAIL;
+    COLONNE_UTILISATEURS_EMAIL =
+        options.cfgColonneEmail
+        || COLONNE_UTILISATEURS_EMAIL;
 
-            COLONNE_UTILISATEURS_NOMCOMPLET =
-                options.cfgColonneNomcompletUtilisateur
-                || COLONNE_UTILISATEURS_NOMCOMPLET;
+    COLONNE_UTILISATEURS_NOMCOMPLET =
+        options.cfgColonneNomcompletUtilisateur
+        || COLONNE_UTILISATEURS_NOMCOMPLET;
 
-            COLONNE_SESSION_UTILISATEUR_CONTEXTE =
-                options.cfgColonneContexte
-                || COLONNE_SESSION_UTILISATEUR_CONTEXTE;
+    COLONNE_SESSION_UTILISATEUR_CONTEXTE =
+        options.cfgColonneContexte
+        || COLONNE_SESSION_UTILISATEUR_CONTEXTE;
 
-            TABLE_SESSION_UTILISATEUR =
-                options.cfgTableSessionUtilisateur
-                || TABLE_SESSION_UTILISATEUR;
-
-        }
-        
-    );
+    TABLE_SESSION_UTILISATEUR =
+        options.cfgTableSessionUtilisateur
+        || TABLE_SESSION_UTILISATEUR;
 
     document.getElementById(
         "table-utilisateur"
@@ -203,8 +200,8 @@ function chargerOptions() {
         "table-session-utilisateur"
     ).value =
         TABLE_SESSION_UTILISATEUR;
-
-}
+           
+});
 
 async function sauvegarderOptions() {
 
@@ -300,6 +297,8 @@ async function onSelectionRecord(
             record.id
         );
 
+        console.log("Fin OnSelectionRecord")
+
     } catch (error) {
 
         console.error(error);
@@ -313,7 +312,7 @@ async function onSelectionRecord(
 // =====================================================
 
 async function chargerContexte() {
-    
+    return
     const contexteId =
     state.utilisateur[
         COLONNE_SESSION_UTILISATEUR_CONTEXTE
@@ -321,7 +320,7 @@ async function chargerContexte() {
     
     console.log(
         "SET CURSOR",
-        contexteId
+        contexteIds
     );
 
     if (!contexteId) {
