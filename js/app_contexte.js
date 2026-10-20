@@ -271,7 +271,7 @@ async function chargerContexte(userEmail) {
 
     const contexte = await lireTable(TABLE_UTILISATEURS)
 
-    const current_user = await contexte.find(row => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
+    const current_user = contexte.find(row => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
 
     if (!current_user) return;
 

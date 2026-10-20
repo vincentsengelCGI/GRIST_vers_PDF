@@ -604,8 +604,10 @@ async function executerExtraction() {
 
         await grist.setCursorPos({rowId: valeurLigneFin});
 
+        console.log("curseur bougé")
 
     }
+    
         // -----------------------------------------------------
         // Gestion des erreurs
         // -----------------------------------------------------
