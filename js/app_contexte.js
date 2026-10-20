@@ -367,6 +367,15 @@ async function mettreAJourContexte(
         "UPDATE CONTEXTE",
         state.utilisateur.id
     );
+        console.log(
+        TABLE_UTILISATEURS
+    );
+        console.log(
+        COLONNE_SESSION_UTILISATEUR_CONTEXTE
+    );
+        console.log(
+        rowId
+    );
 
     await grist.docApi
         .applyUserActions([
