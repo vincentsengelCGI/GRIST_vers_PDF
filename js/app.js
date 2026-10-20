@@ -1,645 +1,1002 @@
-// -----------------------------------------------------
-// Configuration
-// -----------------------------------------------------
+// =====================================================
+// =====================================================
+// CONFIGURATION
+// =====================================================
+// =====================================================
 
-const PKO_NOM_COLONNE_PJ = "A_FichierSource";
-const PKO_NOM_COLONNE_ID = "id";
+const CONFIG = {
 
-const TABLE_AGENTS = "Agents";
-const TABLE_PKO = "PKO";
-const TABLE_PKO_PAGES = "PKO_Pages";
-const TABLE_INDUS = "Indus";
+    PKO_COL_PJ: "A_FichierSource",
 
-let TABLE_UTILISATEURS = "Referentiel_utilisateurs";
-let COLONNE_UTILISATEURS_EMAIL = "utilisateur_courriel";
-let COLONNE_UTILISATEURS_NOMCOMPLET = "utilisateur_nomPrenom";
-let TABLE_SESSION_UTILISATEUR = "Session_utilisateur";
-let COLONNE_UTILISATEURS_ACADEMIE = "Academie";
+    TABLE_PKO: "PKO",
+    TABLE_PKO_PAGES: "PKO_Pages",
+    TABLE_AGENTS: "Agents",
+    TABLE_INDUS: "Indus",
 
-let pyodide = null;
+    TABLE_UTILISATEURS: "Referentiel_utilisateurs",
 
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    TABLE_SESSION_UTILISATEUR: "Session_utilisateur",
 
-// -----------------------------------------------------
-// Variables
-// -----------------------------------------------------
+    COL_EMAIL: "utilisateur_courriel",
+    COL_NOM: "utilisateur_nomPrenom",
+    COL_ACADEMIE: "Academie"
 
-const btn = document.getElementById("btn-extract");
-const statusDiv = document.getElementById("status");
-const fileInfoDiv = document.getElementById("file-info");
+};
+``
 
-let currentRecordId = null;
-let currentAttachmentId = null;
-let id_PKO = null;
-let id_utilisateur = null;
-let aca_utilisateur = null;
+// =====================================================
+// =====================================================
+// ETAT APPLICATION
+// =====================================================
+// =====================================================
 
-// -----------------------------------------------------
-// Widget
-// -----------------------------------------------------
+const state = {
+
+    utilisateur: null,
+
+    pko: {
+        rowId: null,
+        attachmentId: null
+    },
+
+    extractionEnCours: false
+
+};
+
+// =====================================================
+// =====================================================
+// INITIALISATION
+// =====================================================
+// =====================================================
+
 
 async function initialiserWidget() {
 
-    console.log("Initialisation widget");
-	statusDiv.innerText = "Initialisation Python...";
-    await initPyodide();
-    await chargerParser()
-    
-	statusDiv.innerText = "Connexion à Grist...";
+    console.log(
+        "Initialisation widget"
+    );
 
-    if (typeof grist === "undefined") {
-        statusDiv.innerText = "API Grist introuvable";
-        return;
-    }
-
-    console.log("grist OK");
-    console.log("pdfjsLib OK :", pdfjsLib.version);
-    console.log("selectedTable =", grist.selectedTable);
-
+    // 1 - Déclaration du widget auprès de Grist
     grist.ready({
         requiredAccess: "full",
         allowSelectBy: true,
-        onEditOptions: function() {
-            document.getElementById('main-view').style.display = 'none';
-            document.getElementById('config-panel').style.display = 'block';
+        onEditOptions() {
+            ouvrirConfiguration();
         }
     });
 
-    
-    grist.onOptions(function(options) {
-        console.log("chargement des options")
-        if (options) {
-        // Grist renvoie toutes les options enregistrées. Si elles existent, on les applique
-            if (options.cfgNomTableUtilisateur) {
-                TABLE_UTILISATEURS = options.cfgNomTableUtilisateur;
-            }
-            if (options.cfgColonneEmail) {
-                COLONNE_UTILISATEURS_EMAIL = options.cfgColonneEmail;
-            }
-            if (options.cfgColonneNomcompletUtilisateur) {
-                COLONNE_UTILISATEURS_NOMCOMPLET = options.cfgColonneNomcompletUtilisateur;
-            }
-            if (options.cfgColonneAcademieUtilisateur) {
-                COLONNE_UTILISATEURS_ACADEMIE = options.cfgColonneAcademieUtilisateur;
-            }
-            if (options.cfgColonneSession) {
-                TABLE_SESSION_UTILISATEUR = options.cfgColonneSession;
-            }
-            
-            // Remplir le champ de saisie avec la valeur stockée pour que l'utilisateur la voie
-            document.getElementById('table-utilisateur').value = TABLE_UTILISATEURS;
-            document.getElementById('colonne-email').value = COLONNE_UTILISATEURS_EMAIL;
-            document.getElementById('colonne-nom-complet').value = COLONNE_UTILISATEURS_NOMCOMPLET;
-            document.getElementById('colonne-academie').value = COLONNE_UTILISATEURS_ACADEMIE;
-            document.getElementById('table-session').value = TABLE_SESSION_UTILISATEUR;
-        }
-        
-    });
+    // 2 - Chargement éventuel des options
+    chargerOptions();
 
-    // appel de la fonction pour récupérer l'email de l'utilisateur
-    console.log("identification de l'utilisateur...");
-    userEmail = await getUtilisateurEmail();
-    
-    console.log("recherche email utilisateur...")
-    setTimeout( async () => {
-
-        console.log("recherche de :", userEmail, " dans la table des utilisateurs...");
-
-        // recherche de l'utilisateur dans la table des utilisateurs
-        
-        const contexte = await lireTable(TABLE_UTILISATEURS)
-
-        const utilisateur_trouve = contexte.find(row => row[COLONNE_UTILISATEURS_EMAIL] === userEmail);
-        
-        console.log(utilisateur_trouve[COLONNE_UTILISATEURS_NOMCOMPLET])
-
-        id_utilisateur = utilisateur_trouve.id
-        aca_utilisateur = utilisateur_trouve[COLONNE_UTILISATEURS_ACADEMIE]
-        console.log("id utilisateur trouvé : ")
-        console.log(utilisateur_trouve[COLONNE_UTILISATEURS_ACADEMIE])
-
-    }, 500);
-
-
-    document.getElementById('save-btn').addEventListener('click', async function() {
-        const new_TABLE_UTILISATEURS = document.getElementById('table-utilisateur').value;
-        const new_COLONNE_UTILISATEURS_EMAIL = document.getElementById('colonne-email').value;
-        const new_COLONNE_UTILISATEURS_NOMCOMPLET = document.getElementById('colonne-nom-complet').value;
-        const new_COLONNE_UTILISATEURS_ACADEMIE = document.getElementById('colonne-academie').value;
-        const new_TABLE_SESSION_UTILISATEUR = document.getElementById('table-session').value;
-        
-        // Sauvegarde persistante directement dans Grist
-        await grist.setOption('cfgNomTableUtilisateur', new_TABLE_UTILISATEURS);
-        await grist.setOption('cfgColonneEmail', new_COLONNE_UTILISATEURS_EMAIL);
-        await grist.setOption('cfgColonneNomcompletUtilisateur', new_COLONNE_UTILISATEURS_NOMCOMPLET);
-        await grist.setOption('cfgColonneAcademieUtilisateur', new_COLONNE_UTILISATEURS_ACADEMIE);
-        await grist.setOption('cfgColonneSession', new_TABLE_SESSION_UTILISATEUR);
-
-        
-        // Ré-afficher la vue principale et masquer la configuration
-        document.getElementById('config-panel').style.display = 'none';
-        document.getElementById('main-view').style.display = 'block';
-    });
-
-
-    // action à effectuer lorsque l'utilisateur sélectionne un enregistrement dans la table PKO
-    grist.onRecord(async (record) => {
-
-        console.log("Record reçu :", record);
-
-        if (!record) {
-            statusDiv.innerText = "Aucune ligne sélectionnée";
-            return;
-        }
-
-        currentRecordId = record.id;
-
-        // lecture des pièces jointes et de l'id du PKO
-        const attachment = record[PKO_NOM_COLONNE_PJ];
-        id_PKO = record[PKO_NOM_COLONNE_ID];
-
-        console.log("Champ PJ :", attachment);
-
-        currentAttachmentId = null;
-
-        if (typeof attachment === "number") {
-            currentAttachmentId = attachment;
-        }
-
-        if (Array.isArray(attachment)) {
-
-            for (const item of attachment) {
-
-                if (typeof item === "number") {
-                    currentAttachmentId = item;
-                    break;
-                }
-
-                if (item && item.id) {
-                    currentAttachmentId = item.id;
-                    break;
-                }
-            }
-        }
-
-        if (currentAttachmentId) {
-
-            fileInfoDiv.innerText =
-                `PDF détecté : ${currentAttachmentId}`;
-
-            statusDiv.innerText =
-                "Prêt pour l'extraction";
-
-            btn.disabled = false;
-
-        } else {
-
-            fileInfoDiv.innerText =
-                "Aucune pièce jointe trouvée";
-
-            statusDiv.innerText =
-                "Sélectionner un enregistrement contenant un PDF";
-
-            btn.disabled = true;
-        }
-
-    });
-
-    return "chat"
-}
-
-// ---------------------------------------------    --------
-// parser python
-// -----------------------------------------------------
-
-
-async function chargerParser() {
-
-    const response = await fetch(
-        "python/parser.py"
+    document
+    .getElementById(
+        "save-btn"
+    )
+    ?.addEventListener(
+        "click",
+        sauvegarderOptions
     );
 
-    const codePython =
-        await response.text();
 
-    await pyodide.runPythonAsync(
-        codePython
-    );
+    // 3 - Identification utilisateur
+    await chargerUtilisateur();
+
+    // 4 - Déclaration des événements
+    enregistrerEvenements();
+
+    // 5 - Mise à jour interface
+    mettreAJourInterface();
 
     console.log(
-        "Parser Python chargé"
+        "Widget prêt"
     );
 
 }
 
-// -----------------------------------------------------
-// Pyodide
-// -----------------------------------------------------
-
-async function initPyodide() {
-    console.log("Chargement de Pyodide...");
-    pyodide = await loadPyodide();
-    console.log("Pyodide prêt");
-}
 
 
-// -----------------------------------------------------
-// conversion table grist colonne -> lignes
-// -----------------------------------------------------
+// =====================================================
+// =====================================================
+// EXTRACTION
+// =====================================================
+// =====================================================
 
-function tableToRecords(tableData) {
 
-    const rows = [];
+// ---------------------------------------------- 
+// Executer Extraction
+// ---------------------------------------------- 
 
-    const rowCount =
-        tableData.id.length;
+async function executerExtraction() {
 
-    const columns =
-        Object.keys(tableData);
-
-    for (let i = 0; i < rowCount; i++) {
-
-        const row = {};
-
-        for (const column of columns) {
-            row[column] =
-                tableData[column][i];
-        }
-
-        rows.push(row);
+    if (
+        state.extractionEnCours
+    ) {
+        return;
     }
 
-    return rows;
-}
+    const btnExtract  =
+    document.getElementById(
+        "btn-extract"
+    );
 
-// -----------------------------------------------------
-// identification utilisateur
-// -----------------------------------------------------
+    try {
 
-async function getUtilisateurEmail() {
-  try {
-    // 1. Demander à Grist de créer une ligne vide dans notre table tampon
-    const nouvelleLigne = await grist.getTable(TABLE_SESSION_UTILISATEUR).create({ fields: {} });
+        btnExtract.disabled = true;
+        state.extractionEnCours = true;
 
-    // 2. Récupérer l'ID de la ligne créée
-    const rowId = nouvelleLigne.id;
+        if (!state.pko.rowId) {
 
-    // 3. Lire la ligne pour récupérer la valeur injectée par la formule Grist
-    const records = await lireTable(TABLE_SESSION_UTILISATEUR)
+            throw new Error(
+                "Aucun PKO sélectionné"
+            );
 
-    const session = records.find(r => r.id === rowId);
+        }
 
-    const emailUtilisateur = session.email;
-    
-    // 4. Nettoyer la table en supprimant la ligne temporaire
-    await grist.getTable(TABLE_SESSION_UTILISATEUR).destroy(rowId);
-    
-    // Vous avez maintenant le nom de l'utilisateur !
-    console.log("Utilisateur trouvé :", emailUtilisateur);
-    return emailUtilisateur;
+        if (!state.pko.attachmentId) {
 
-  } catch (error) {
-    console.error("Impossible de récupérer le nom d'utilisateur", error);
-    return null;
-  }
-}
+            throw new Error(
+                "Aucun PDF associé"
+            );
 
-// -----------------------------------------------------
-// helper lecture des tables
-// -----------------------------------------------------
+        }
 
-async function lireTable(tableName) {
+        statut_afficher("Téléchargement PDF...");
 
-    const tableData =
-        await grist.docApi.fetchTable(
-            tableName
+        const pdfData =
+            await telechargerPdf(
+                state.pko.attachmentId
+            );
+
+        statut_afficher("Lecture PDF...");
+
+        const pagesPdf =
+            await lirePagesPdf(
+                pdfData
+            );
+
+        const pagesPko =
+            construirePagesPko(
+                state.pko.rowId,
+                pagesPdf,
+                state.utilisateur.academie
+            );
+
+        await ajouterLignes(
+            CONFIG.TABLE_PKO_PAGES,
+            pagesPko
         );
 
-    const lignes = [];
+        const pagesRechargees =
+            await lireTable(
+                CONFIG.TABLE_PKO_PAGES
+            );
+
+        const pagesDuPko =
+            pagesRechargees.filter(
+                p =>
+                    p.PKO_id
+                    === state.pko.rowId
+            );
+
+        const agents =
+            construireAgents(
+                pagesDuPko
+            );
+
+        await ajouterLignes(
+            CONFIG.TABLE_AGENTS,
+            agents
+        );
+
+        const tableAgents =
+            await lireTable(
+                CONFIG.TABLE_AGENTS
+            );
+
+        const agentsDuPko =
+            tableAgents.filter(
+                a =>
+                    a.PKO_ID
+                    === state.pko.rowId
+            );
+
+        const indus =
+            construireIndus(
+                agentsDuPko
+            );
+
+        await ajouterLignes(
+            CONFIG.TABLE_INDUS,
+            indus
+        );
+
+        statut_afficher("Extraction terminée");
+
+    }
+    catch(error) {
+
+        console.error(error);
+
+        statut_afficher(error.message);
+
+    }
+    finally {
+
+        btnExtract.disabled = false;
+        state.extractionEnCours = false;
+    }
+
+}
+
+// ---------------------------------------------- 
+// Executer lire PDF
+// ---------------------------------------------- 
+
+async function lirePagesPdf(
+    pdfData
+) {
+
+    const pdf =
+        await pdfjsLib
+            .getDocument({
+                data: pdfData
+            })
+            .promise;
+
+    const pages = [];
+
+    for (
+        let i = 1;
+        i <= pdf.numPages;
+        i++
+    ) {
+
+        const page =
+            await pdf.getPage(i);
+
+        const contenu =
+            await page.getTextContent();
+
+        pages.push(
+            contenu.items
+                .map(x => x.str)
+                .join(" ")
+                .trim()
+        );
+
+    }
+
+    return pages;
+
+}
+
+// ---------------------------------------------- 
+// Executer télécharger PDF
+// ---------------------------------------------- 
+
+async function telechargerPdf(
+    attachmentId
+) {
+
+    const token =
+        await grist.docApi
+            .getAccessToken({});
+
+    const url =
+        `${token.baseUrl}/attachments/${attachmentId}/download?auth=${encodeURIComponent(token.token)}`;
+
+    const response =
+        await fetch(url);
+
+    if (!response.ok) {
+
+        throw new Error(
+            "Téléchargement PDF impossible"
+        );
+
+    }
+
+    return response.arrayBuffer();
+
+}
+
+// ---------------------------------------------- 
+// Construire pages PKO
+// ---------------------------------------------- 
+
+function construirePagesPko(
+    pkoId,
+    pages,
+    academie
+) {
+
+    return pages.map(
+        (
+            contenu,
+            index
+        ) => ({
+
+            PKO_id: pkoId,
+
+            numero_page_pko:
+                index + 1,
+
+            contenu_pagepko:
+                contenu,
+
+            academie:
+                academie
+
+        })
+    );
+
+}
+
+// ---------------------------------------------- 
+//  Construire indus
+// >> à partir de la liste des agents, construit 
+//    la liste des indus à créer
+// ---------------------------------------------- 
+
+function construireIndus(
+    agents
+) {
+
+    const resultat = [];
+
+    for (const agent of agents) {
+
+        const liste =
+            agent.Indus_agents_liste_text
+            || [];
+
+        for (const indu of liste) {
+            if (!indu) {
+                continue;
+                }
+                
+            const nbI =
+                (
+                    indu.match(/I/g)
+                    || []
+                ).length;
+
+            if (nbI > 24) {
+
+                resultat.push({
+
+                    indu_brut: indu,
+
+                    agent_ID: agent.id
+
+                });
+
+            }
+
+        }
+
+    }
+
+    return resultat;
+
+}
+
+// ---------------------------------------------- 
+//  Construire agents
+// >> à partir des pagesPKO, construit la liste
+//    des agents à créer
+// ---------------------------------------------- 
+
+function construireAgents(
+    pagesPko
+) {
+
+    const groupes = {};
+
+    for (const page of pagesPko) {
+        if (
+                !page.numero_enregistrement
+            ) {
+
+                continue;
+
+            }
+        const numero =
+            page.numero_enregistrement;
+
+        if (!groupes[numero]) {
+
+            groupes[numero] = [];
+
+        }
+
+        groupes[numero].push(page.id);
+
+    }
+
+    return Object.values(groupes)
+        .map(
+            ids => ({
+                PAGE_PKO_ID:
+                    JSON.stringify(ids)
+            })
+        );
+
+}
+
+// ---------------------------------------------- 
+// Selection du pko
+// ---------------------------------------------- 
+
+async function onSelectionPko(
+    record
+) {
+
+    if (!record?.id) {
+
+        setPkoSelection(
+            null,
+            null
+        );
+
+        return;
+
+    }
+
+    setPkoSelection(
+
+        record.id,
+
+        getAttachmentId(
+            record
+        )
+
+    );
+
+}
+
+function setPkoSelection(
+    rowId,
+    attachmentId
+) {
+
+    state.pko.rowId =
+        rowId;
+
+    state.pko.attachmentId =
+        attachmentId;
+
+    mettreAJourInterface();
+
+}
+
+// =====================================================
+// =====================================================
+// UTILITAIRES GRIST
+// =====================================================
+// =====================================================
+
+// ---------------------------------------------- 
+//  Ajouter des lignes
+// ---------------------------------------------- 
+
+async function ajouterLignes(
+    table,
+    lignes
+) {
+
+    if (!lignes.length) {
+        return;
+    }
+
+    const actions = lignes.map(
+        ligne => [
+            "AddRecord",
+            table,
+            null,
+            ligne
+        ]
+    );
+
+    await grist.docApi.applyUserActions(
+        actions
+    );
+
+}
+
+// ---------------------------------------------- 
+//  Lire table
+// ---------------------------------------------- 
+
+async function lireTable(
+    table
+) {
+
+    const data =
+        await grist.docApi.fetchTable(
+            table
+        );
+
+    return tableToRecords(data);
+
+}
+
+
+// ---------------------------------------------- 
+//  table vers record
+// ---------------------------------------------- 
+
+function tableToRecords(
+    tableData
+) {
+
+    const records = [];
 
     const colonnes =
-        Object.keys(tableData);
+        Object.keys(
+            tableData
+        );
 
     const nbLignes =
         tableData.id.length;
 
-    for (let i = 0; i < nbLignes; i++) {
+    for (
+        let i = 0;
+        i < nbLignes;
+        i++
+    ) {
 
-        const ligne = {};
+        const record = {};
 
-        for (const colonne of colonnes) {
+        for (
+            const colonne
+            of colonnes
+        ) {
 
-            ligne[colonne] =
+            record[colonne] =
                 tableData[colonne][i];
+
         }
 
-        lignes.push(ligne);
+        records.push(record);
+
     }
 
-    return lignes;
+    return records;
+
 }
 
-// -----------------------------------------------------
-// Extraction
-// -----------------------------------------------------
+// =====================================================
+// SESSION / EMAIL
+// =====================================================
 
-async function executerExtraction() {
+async function getUtilisateurEmail() {
 
-    console.log("=== EXTRACTION DEMARREE ===");
-	
     try {
 
-        console.log("Attachment ID :", currentAttachmentId);
+        const nouvelleLigne =
+            await grist
+                .getTable(
+                    CONFIG.TABLE_SESSION_UTILISATEUR
+                )
+                .create({
+                    fields: {}
+                });
 
-        const tokenInfo =
-            await grist.docApi.getAccessToken({});
+        const rowId =
+            nouvelleLigne.id;
 
-        console.log("Token obtenu :", tokenInfo);
+        const records =
+            await lireTable(
+                CONFIG.TABLE_SESSION_UTILISATEUR
+            );
 
-        const pdfUrl =
-            `${tokenInfo.baseUrl}/attachments/${currentAttachmentId}/download?auth=${encodeURIComponent(tokenInfo.token)}`;
+        const session =
+            records.find(
+                r =>
+                    r.id === rowId
+            );
 
-        console.log("URL PDF :", pdfUrl);
+        if (!session) {
 
-        const response = await fetch(pdfUrl);
-
-        console.log("Réponse fetch :", response.status);
-
-        const pdfData = await response.arrayBuffer();
-
-        console.log("Taille PDF :", pdfData.byteLength);
-
-        const loadingTask =
-            pdfjsLib.getDocument({
-                data: pdfData
-            });
-
-        const pdf =
-            await loadingTask.promise;
-
-        const agents = [];
-
-        // -----------------------------------------------------
-        // Découpage du pdf en pages agent
-        // -----------------------------------------------------
-
-        for (let i = 1; i <= pdf.numPages; i++) {
-
-            const page = await pdf.getPage(i);
-
-            const textContent =
-                await page.getTextContent();
-
-            const textePage =
-                textContent.items
-                    .map(item => item.str)
-                    .join(" ");
-
-            agents.push(
-                textePage.trim()
+            throw new Error(
+                "Session introuvable"
             );
 
         }
 
-        pyodide.globals.set(
-            "pko_id",
-            id_PKO
-        );
+        const emailUtilisateur =
+            session.email;
 
-        pyodide.globals.set(
-            "pdf_pages",
-            agents
-        );
-
-        pyodide.globals.set(
-            "utilisateur_aca",
-            aca_utilisateur
-        );
-
-        const pagesJson =
-            await pyodide.runPythonAsync(`
-        construire_pages_pko(
-            pko_id,
-            pdf_pages,
-            utilisateur_aca
-        )
-        `);
-
-        const pagesPko =
-            JSON.parse(pagesJson);
-
-        // -----------------------------------------------------
-        // Ecriture des pages agent dans la page agent
-        // -----------------------------------------------------
-
-        const actions = [];
-
-        for (const page of pagesPko) {
-            console.log(page);
-            actions.push([
-                "AddRecord",
-                TABLE_PKO_PAGES,
-                null,
-                page
-            ]);
-
-        }
-        console.log("action pages pko >>>>>>>");
-        console.log(actions);
-
-        await grist.docApi.applyUserActions(
-            actions
-        );
-
-        statusDiv.innerText =
-            "Extraction PKO terminée";
-
-        // -----------------------------------------------------
-        // récupération des données des pages pko extraites
-        // -----------------------------------------------------
-
-        const pages =
-            await lireTable(TABLE_PKO_PAGES);
-
-        const pagesDuPko =
-            pages.filter(
-                p => p.PKO_id === currentRecordId
-            );
-        
-        const valeurLigneFin = currentRecordId;
-
-        statusDiv.innerText =
-            "lecture des données agents...";
-
-        // -----------------------------------------------------
-        // construction liste des agents
-        // -----------------------------------------------------
-
-        pyodide.globals.set(
-            "pages_Du_Pko",
-            pagesDuPko
-        );
-
-        const agents_JSON =
-           await pyodide.runPythonAsync(`
-            construire_agents(
-                pages_Du_Pko.to_py()
+        await grist
+            .getTable(
+                CONFIG.TABLE_SESSION_UTILISATEUR
             )
-       `);
+            .destroy(rowId);
 
-        const agents_a_creer =
-            JSON.parse(agents_JSON);
-
-        // -----------------------------------------------------
-        // Ecriture des pages agent dans la page agent
-        // -----------------------------------------------------
-
-        const table_existante =
-            await lireTable(TABLE_AGENTS);
-
-        console.log("table existante >>>>>>>");
-        console.log(table_existante);
-
-        statusDiv.innerText =
-            "création des lignes agents...";
-
-        const actions_lignes_agents = [];
-
-        for (const ligne_agent of agents_a_creer) {
-            console.log(ligne_agent);
-            actions_lignes_agents.push([
-                "AddRecord",
-                TABLE_AGENTS,
-                null,
-                ligne_agent
-            ]);
-
-        }
-
-        console.log(actions_lignes_agents);
-
-        await grist.docApi.applyUserActions(
-            actions_lignes_agents
+        console.log(
+            "Utilisateur trouvé :",
+            emailUtilisateur
         );
 
-        statusDiv.innerText =
-            "lignes agents créés";
+        return emailUtilisateur;
 
-        // -----------------------------------------------------
-        // Lecture des indus brut depuis la table agents
-        // -----------------------------------------------------
-            
-        const table_agents =
-            await lireTable(TABLE_AGENTS);
+    } catch (error) {
 
-        console.log("table agents:");
-        console.log(table_agents);
-
-        const indus_agents =
-        table_agents.filter(
-            p => p.PKO_ID === currentRecordId
+        console.error(
+            "Impossible de récupérer l'utilisateur",
+            error
         );
 
-        console.log("indus_agents:");
-        console.log(indus_agents);
-        
-        statusDiv.innerText =
-        "lecture des données indus...";
-
-        // -----------------------------------------------------
-        // construction liste des indus
-        // -----------------------------------------------------
-
-        console.log("construire indus python >>>>>>>");
-        
-        pyodide.globals.set(
-            "indus_agents",
-            indus_agents
-        );
-
-        const indus_JSON =
-           await pyodide.runPythonAsync(`
-            construire_indus(
-                indus_agents.to_py()
-            )
-       `);
-
-        const indus_a_creer =
-            JSON.parse(indus_JSON);
-        console.log("indus_a_creer:");
-        console.log(indus_a_creer);
-
-        // -----------------------------------------------------
-        // Ecriture des pages indus dans la page indus
-        // -----------------------------------------------------
-
-        statusDiv.innerText =
-            "création des lignes indus...";
-
-        const actions_lignes_indus = [];
-
-        for (const ligne_indus of indus_a_creer) {
-            console.log(ligne_indus);
-            actions_lignes_indus.push([
-                "AddRecord",
-                TABLE_INDUS,
-                null,
-                ligne_indus
-            ]);
-
-        }
-        console.log("actions_lignes_indus >>");
-        console.log(actions_lignes_indus);
-
-        await grist.docApi.applyUserActions(
-            actions_lignes_indus
-        );
-
-        statusDiv.innerText =
-            "lignes indus créés";
-
-        console.log("valeurLigneFin:", valeurLigneFin);
-        
-        console.log("ecriture vers contexte pko");
-        await grist.docApi.applyUserActions([
-            [
-                "UpdateRecord",
-                TABLE_UTILISATEURS,
-                id_utilisateur,
-                {
-                    [COLONNE_SESSION_UTILISATEUR_CONTEXTE]: valeurLigneFin
-                }
-            ]
-        ]);
+        return null;
 
     }
-    
-        // -----------------------------------------------------
-        // Gestion des erreurs
-        // -----------------------------------------------------
 
-    catch (err) {
-
-        console.error(err);
-
-        statusDiv.innerText =
-            "Erreur : " + err.message;
-    }
-    finally {
-
-        btn.disabled = false;
-    }
 }
 
-// -----------------------------------------------------
-// Bouton
-// -----------------------------------------------------
+// ---------------------------------------------- 
+// Charger utilisateur
+// ---------------------------------------------- 
 
-btn.onclick = executerExtraction;
+async function chargerUtilisateur() {
 
-// -----------------------------------------------------
+    const email =
+        await getUtilisateurEmail();
+
+    const utilisateurs =
+        await lireTable(
+            CONFIG.TABLE_UTILISATEURS
+        );
+
+    const utilisateur =
+        utilisateurs.find(
+
+            u =>
+
+                u[
+                    CONFIG.COL_EMAIL
+                ] === email
+
+        );
+
+    if (!utilisateur) {
+
+        throw new Error(
+            "Utilisateur introuvable"
+        );
+
+    }
+
+    state.utilisateur = {
+
+        id: utilisateur.id,
+
+        email: email,
+
+        nom:
+            utilisateur[
+                CONFIG.COL_NOM
+            ],
+
+        academie:
+            utilisateur[
+                CONFIG.COL_ACADEMIE
+            ]
+
+    };
+
+    console.log(
+        "Utilisateur chargé :",
+        state.utilisateur
+    );
+
+}
+
+// ---------------------------------------------- 
+// enregistrer les évènements
+// ---------------------------------------------- 
+
+function enregistrerEvenements() {
+
+    grist.onRecord(
+        onSelectionPko
+    );
+
+    document
+        .getElementById(
+            "btn-extract"
+        )
+        .addEventListener(
+            "click",
+            executerExtraction
+        );
+
+}
+
+// ---------------------------------------------- 
+// mise à jour de l'interface
+// ---------------------------------------------- 
+
+function mettreAJourInterface() {
+
+    const btn =
+        document.getElementById(
+            "btn-extract"
+        );
+
+    const info =
+        document.getElementById(
+            "file-info"
+        );
+
+    if (
+        !state.pko.rowId
+    ) {
+
+        btn.disabled = true;
+
+        info.textContent =
+            "Aucun PKO sélectionné";
+
+        return;
+
+    }
+
+    if (
+        !state.pko.attachmentId
+    ) {
+
+        btn.disabled = true;
+
+        info.textContent =
+            "Aucun PDF détecté";
+
+        return;
+
+    }
+
+    btn.disabled = false;
+
+    info.textContent =
+        `PKO ${state.pko.rowId} prêt pour extraction`;
+
+}
+
+// ---------------------------------------------- 
+// affichage du statut
+// ---------------------------------------------- 
+
+function statut_afficher(message) {
+
+    document
+        .getElementById(
+            "status"
+        )
+        .textContent = message;
+
+}
+
+// ---------------------------------------------- 
+// CHARGEMENT DES OPTIONS DU WIDGET
+// ----------------------------------------------
+
+function chargerOptions() {
+
+    grist.onOptions((options) => {
+
+        if (!options) {
+            return;
+        }
+
+        CONFIG.TABLE_UTILISATEURS =
+            options.cfgNomTableUtilisateur
+            || CONFIG.TABLE_UTILISATEURS;
+
+        CONFIG.COL_EMAIL =
+            options.cfgColonneEmail
+            || CONFIG.COL_EMAIL;
+
+        CONFIG.COL_NOM =
+            options.cfgColonneNomComplet
+            || CONFIG.COL_NOM;
+
+        CONFIG.COL_ACADEMIE =
+            options.cfgColonneAcademie
+            || CONFIG.COL_ACADEMIE;
+
+        CONFIG.TABLE_SESSION_UTILISATEUR =
+            options.cfgNomTableSession
+            || CONFIG.TABLE_SESSION_UTILISATEUR;
+
+            
+        const champ_1 =
+            document.getElementById(
+                "table-utilisateur"
+            );
+        if (champ_1) {
+            champ_1.value =
+                CONFIG.TABLE_UTILISATEURS;
+        }
+
+
+        const champ_2 =
+            document.getElementById(
+                "colonne-email"
+            );
+        if (champ_2) {
+            champ_2.value =
+                CONFIG.COL_EMAIL;
+        }
+
+
+        const champ_3 =
+            document.getElementById(
+                "colonne-nom-complet"
+            );
+        if (champ_3) {
+            champ_3.value =
+                CONFIG.COL_NOM;
+        }
+        
+
+        const champ_4 =
+            document.getElementById(
+                "colonne-academie"
+            );
+        if (champ_4) {
+            champ_4.value =
+                CONFIG.COL_ACADEMIE;
+        }
+
+
+        const champ_5 =
+            document.getElementById(
+                "table-session"
+            );    
+        if (champ_5) {
+            champ_5.value =
+                CONFIG.TABLE_SESSION_UTILISATEUR;
+        }
+
+
+        console.log(
+            "Configuration chargée",
+            CONFIG
+        );
+
+    });
+
+}
+
+// ---------------------------------------------- 
+// SAUVEGARDE DES OPTIONS
+// ---------------------------------------------- 
+
+async function sauvegarderOptions() {
+
+    await grist.setOption(
+        "cfgNomTableUtilisateur",
+        document.getElementById(
+            "table-utilisateur"
+        ).value
+    );
+
+    await grist.setOption(
+        "cfgColonneEmail",
+        document.getElementById(
+            "colonne-email"
+        ).value
+    );
+
+    await grist.setOption(
+        "cfgColonneNomComplet",
+        document.getElementById(
+            "colonne-nom-complet"
+        ).value
+    );
+
+    await grist.setOption(
+        "cfgColonneAcademie",
+        document.getElementById(
+            "colonne-academie"
+        ).value
+    );
+
+    await grist.setOption(
+        "cfgNomTableSession",
+        document.getElementById(
+            "table-session"
+        ).value
+    );
+
+    location.reload();
+
+    console.log(
+        "Options enregistrées"
+    );
+
+}
+
+// ---------------------------------------------- 
+// ouvrir panneau de config
+// ---------------------------------------------- 
+
+function ouvrirConfiguration() {
+
+    document.getElementById(
+        "main-view"
+    ).style.display = "none";
+
+    document.getElementById(
+        "config-panel"
+    ).style.display = "block";
+
+}
+
+// ---------------------------------------------- 
+//  récupérer pièce jointe
+// ---------------------------------------------- 
+
+function getAttachmentId(record) {
+
+    const attachment =
+        record[
+            CONFIG.PKO_COL_PJ
+        ];
+
+    if (!attachment) {
+        return null;
+    }
+
+    if (
+        typeof attachment
+        === "number"
+    ) {
+        return attachment;
+    }
+
+    if (
+        Array.isArray(
+            attachment
+        )
+    ) {
+
+        const premier =
+            attachment[0];
+
+        if (
+            typeof premier
+            === "number"
+        ) {
+
+            return premier;
+
+        }
+
+        if (
+            premier &&
+            typeof premier
+            === "object"
+        ) {
+
+            return premier.id;
+
+        }
+
+    }
+
+    return null;
+
+}
+
+
+// =====================================================
+// =====================================================
 // Démarrage
-// -----------------------------------------------------
+// =====================================================
+// =====================================================
 
-initialiserWidget();
+window.addEventListener(
+    "DOMContentLoaded",
+    initialiserWidget
+);
