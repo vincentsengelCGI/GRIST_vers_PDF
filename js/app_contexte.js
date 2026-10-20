@@ -377,18 +377,16 @@ async function mettreAJourContexte(
         rowId
     );
 
-    await grist.docApi
-        .applyUserActions([
-            [
-                "UpdateRecord",
-                TABLE_UTILISATEURS,
-                state.utilisateur.id,
-                {
-                    [COLONNE_SESSION_UTILISATEUR_CONTEXTE]:
-                        rowId
-                }
-            ]
-        ]);
+    await grist.docApi.applyUserActions([
+        [
+            "UpdateRecord",
+            TABLE_UTILISATEURS,
+            state.utilisateur.id,
+            {
+                Contexte_PKO: rowId
+            }
+        ]
+    ]);
 
     console.log(
         "UDATE STATE UTILISATEUR"
