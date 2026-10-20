@@ -283,11 +283,16 @@ async function onSelectionRecord(
 // =====================================================
 
 async function chargerContexte() {
-
+    
     const contexteId =
-        state.utilisateur[
-            COLONNE_SESSION_UTILISATEUR_CONTEXTE
-        ];
+    state.utilisateur[
+        COLONNE_SESSION_UTILISATEUR_CONTEXTE
+    ];
+    
+    console.log(
+        "SET CURSOR",
+        contexteId
+    );
 
     if (!contexteId) {
 
@@ -327,6 +332,11 @@ async function chargerContexte() {
 async function mettreAJourContexte(
     rowId
 ) {
+
+    console.log(
+        "UPDATE CONTEXTE",
+        rowId
+    );
 
     await grist.docApi
         .applyUserActions([
