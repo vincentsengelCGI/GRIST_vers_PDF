@@ -365,7 +365,7 @@ async function mettreAJourContexte(
 
     console.log(
         "UPDATE CONTEXTE",
-        rowId
+        state.utilisateur.id
     );
 
     await grist.docApi
@@ -389,6 +389,9 @@ async function mettreAJourContexte(
         COLONNE_SESSION_UTILISATEUR_CONTEXTE
     ] = rowId;
 
+    console.log(
+        "UTILISATEUR contexte mis à jour"
+    );
 }
 
 // =====================================================
