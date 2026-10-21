@@ -362,6 +362,9 @@ function construireIndus(
             console.log("liste : ", liste);
 
         for (const indu of liste) {
+            
+            console.log("indu : ", indu);
+
             if (!indu) {
                 continue;
                 }
