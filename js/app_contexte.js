@@ -364,7 +364,7 @@ async function mettreAJourContexte(
     rowId
 ) {
     console.log("update contexte désactivé");
-    return
+
     console.log(
         "UPDATE CONTEXTE",
         state.utilisateur.id
@@ -385,6 +385,8 @@ async function mettreAJourContexte(
         colonne: COLONNE_SESSION_UTILISATEUR_CONTEXTE,
         valeur: rowId
     });
+
+    return
 
     await grist.docApi.applyUserActions([
             [
