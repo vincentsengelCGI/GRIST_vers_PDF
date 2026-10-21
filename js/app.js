@@ -108,6 +108,8 @@ async function initialiserWidget() {
 
 async function executerExtraction() {
 
+    console.log("Extraction démarrée...");
+
     if (
         state.extractionEnCours
     ) {
@@ -141,7 +143,7 @@ async function executerExtraction() {
         }
 
         statut_afficher("Téléchargement PDF...");
-
+        console.log("Chargement PDF...");
         const pdfData =
             await telechargerPdf(
                 state.pko.attachmentId
@@ -193,6 +195,9 @@ async function executerExtraction() {
                 CONFIG.TABLE_AGENTS
             );
 
+        console.log("Table agents créée : ", tableAgents);
+        console.log("Création des indus...");
+
         const agentsDuPko =
             tableAgents.filter(
                 a =>
@@ -200,10 +205,14 @@ async function executerExtraction() {
                     === state.pko.rowId
             );
 
+        console.log("Agents du PKO : ", agentsDuPko);
+
         const indus =
             construireIndus(
                 agentsDuPko
             );
+
+        console.log("Indus à créer : ", indus);
 
         await ajouterLignes(
             CONFIG.TABLE_INDUS,
@@ -211,7 +220,7 @@ async function executerExtraction() {
         );
 
         statut_afficher("Extraction terminée");
-
+        console.log("Extraction terminee");
     }
     catch(error) {
 
