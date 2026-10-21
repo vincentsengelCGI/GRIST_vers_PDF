@@ -176,7 +176,7 @@ async function executerExtraction() {
         const pagesDuPko =
             pagesRechargees.filter(
                 p =>
-                    p.PKO_id
+                    p.PKO_ID
                     === state.pko.rowId
             );
 
@@ -325,7 +325,7 @@ function construirePagesPko(
             index
         ) => ({
 
-            PKO_id: pkoId,
+            PKO_ID: pkoId,
 
             numero_page_pko:
                 index + 1,
