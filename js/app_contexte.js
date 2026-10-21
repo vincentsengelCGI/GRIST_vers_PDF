@@ -322,7 +322,7 @@ async function chargerContexte() {
     
     console.log(
         "SET CURSOR",
-        contexteIds
+        contexteId
     );
 
     if (!contexteId) {
