@@ -358,6 +358,8 @@ function construireIndus(
         const liste =
             agent.Indus_agents_liste_text
             || [];
+        
+            console.log("liste : ", liste);
 
         for (const indu of liste) {
             if (!indu) {
@@ -370,6 +372,8 @@ function construireIndus(
                     || []
                 ).length;
 
+            console.log("nbI : ", nbI);
+            
             if (nbI > 24) {
 
                 resultat.push({
