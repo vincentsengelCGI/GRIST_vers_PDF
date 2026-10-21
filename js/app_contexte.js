@@ -386,7 +386,6 @@ async function mettreAJourContexte(
         valeur: rowId
     });
 
-    return
 
     await grist.docApi.applyUserActions([
             [
