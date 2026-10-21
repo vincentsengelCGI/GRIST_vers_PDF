@@ -314,7 +314,7 @@ async function onSelectionRecord(
 // =====================================================
 
 async function chargerContexte() {
-    return
+
     const contexteId =
     state.utilisateur[
         COLONNE_SESSION_UTILISATEUR_CONTEXTE
@@ -363,7 +363,8 @@ async function chargerContexte() {
 async function mettreAJourContexte(
     rowId
 ) {
-
+    console.log("update contexte désactivé");
+    return
     console.log(
         "UPDATE CONTEXTE",
         state.utilisateur.id
