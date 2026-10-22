@@ -406,13 +406,16 @@ async function getUtilisateurCourant() {
             TABLE_UTILISATEURS
         );
 
+    const email =
+        await getUtilisateurEmail();
+
     const utilisateur_courant = utilisateurs.find(
 
         utilisateur =>
 
             utilisateur[
                 COLONNE_UTILISATEURS_EMAIL
-            ] === state.userEmail
+            ] === email
 
     );
 
