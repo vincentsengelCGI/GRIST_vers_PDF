@@ -124,6 +124,9 @@ async function initialiserWidget() {
         );
 
     // 4 - chargement ou création de la session utilisateur
+    
+        console.log("State : ", state);
+
         state.contexte = await getOrCreateSession(state.utilisateur.id);
         
         await chargerContexte();
