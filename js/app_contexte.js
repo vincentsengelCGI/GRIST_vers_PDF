@@ -1,5 +1,7 @@
 // =====================================================
-// CONFIGURATION PAR DÉFAUT
+// =====================================================
+// CONFIGURATION
+// =====================================================
 // =====================================================
 
 let TABLE_UTILISATEURS = "Referentiel_utilisateurs";
@@ -10,25 +12,41 @@ let COLONNE_UTILISATEURS_EMAIL =
 let COLONNE_UTILISATEURS_NOMCOMPLET =
     "utilisateur_nomPrenom";
 
-let COLONNE_SESSION_UTILISATEUR_CONTEXTE =
-    "Contexte_PKO";
+let TABLE_CONTEXTE_UTILISATEURS = 
+    "Contextes_utilisateurs";
+
+let COLONNE_CONTEXTE_PKO_ID =
+    "PKO_ID";
+
+let COLONNE_CONTEXTE_UTILISATEUR_ID = 
+    "USER_ID";
 
 let TABLE_SESSION_UTILISATEUR =
     "Session_utilisateur";
 
+    
 // =====================================================
-// ETAT DE L'APPLICATION
 // =====================================================
+// ETAT APPLICATION
+// =====================================================
+// =====================================================
+
 
 const state = {
 
-    userEmail: null,
-
     utilisateur: null,
 
-    synchronisationEnCours: false
+    synchronisationEnCours: false,
+
+    contexte: null
 
 };
+
+// =====================================================
+// =====================================================
+// INITIALISATION
+// =====================================================
+// =====================================================
 
 // =====================================================
 // INIT
@@ -96,14 +114,6 @@ async function initialiserWidget() {
             "Identification utilisateur..."
         );
 
-        state.userEmail =
-            await getUtilisateurEmail();
-
-        console.log(
-            "Utilisateur :",
-            state.userEmail
-        );
-
         state.utilisateur =
             await getUtilisateurCourant();
 
@@ -124,6 +134,9 @@ async function initialiserWidget() {
             ]
         );
 
+        // chargement ou créatoin de la session utilisateur
+        state.contexte = await getOrCreateSession(state.utilisateur);
+           
         await chargerContexte();
 
         console.log(
@@ -168,9 +181,9 @@ grist.onOptions((options) => {
         options.cfgColonneNomcompletUtilisateur
         || COLONNE_UTILISATEURS_NOMCOMPLET;
 
-    COLONNE_SESSION_UTILISATEUR_CONTEXTE =
+    COLONNE_CONTEXTE_PKO_ID =
         options.cfgColonneContexte
-        || COLONNE_SESSION_UTILISATEUR_CONTEXTE;
+        || COLONNE_CONTEXTE_PKO_ID;
 
     TABLE_SESSION_UTILISATEUR =
         options.cfgTableSessionUtilisateur
@@ -194,7 +207,7 @@ grist.onOptions((options) => {
     document.getElementById(
         "colonne-contexte"
     ).value =
-        COLONNE_SESSION_UTILISATEUR_CONTEXTE;
+        COLONNE_CONTEXTE_PKO_ID;
 
     document.getElementById(
         "table-session-utilisateur"
@@ -280,7 +293,7 @@ async function onSelectionRecord(
 
         const contexteActuel =
             state.utilisateur[
-                COLONNE_SESSION_UTILISATEUR_CONTEXTE
+                COLONNE_CONTEXTE_PKO_ID
             ];
 
         if (
@@ -316,8 +329,8 @@ async function onSelectionRecord(
 async function chargerContexte() {
 
     const contexteId =
-    state.utilisateur[
-        COLONNE_SESSION_UTILISATEUR_CONTEXTE
+    state.contexte[
+        COLONNE_CONTEXTE_PKO_ID
     ];
     
     console.log(
@@ -363,7 +376,7 @@ async function chargerContexte() {
 async function mettreAJourContexte(
     rowId
 ) {
-    console.log("update contexte désactivé");
+    console.log("update contexte");
 
     console.log(
         "UPDATE CONTEXTE",
@@ -373,25 +386,18 @@ async function mettreAJourContexte(
         TABLE_UTILISATEURS
     );
         console.log(
-        COLONNE_SESSION_UTILISATEUR_CONTEXTE
+        COLONNE_CONTEXTE_PKO_ID
     );
         console.log(
         rowId
     );
 
-    console.log({
-        table: TABLE_UTILISATEURS,
-        rowIdUtilisateur: state.utilisateur.id,
-        colonne: COLONNE_SESSION_UTILISATEUR_CONTEXTE,
-        valeur: rowId
-    });
-
 
     await grist.docApi.applyUserActions([
             [
                 "UpdateRecord",
-                TABLE_UTILISATEURS,
-                state.utilisateur.id,
+                TABLE_CONTEXTE_UTILISATEURS,
+                state.contexte.id,
                 {
                     [COLONNE_SESSION_UTILISATEUR_CONTEXTE]: rowId
                 }
@@ -410,6 +416,13 @@ async function mettreAJourContexte(
         "UTILISATEUR contexte mis à jour"
     );
 }
+
+
+// =====================================================
+// =====================================================
+// UTILITAIRES GRIST
+// =====================================================
+// =====================================================
 
 // =====================================================
 // UTILISATEUR
@@ -532,5 +545,55 @@ function tableToRecords(
     }
 
     return records;
+
+}
+
+
+// =====================================================
+//  récupérer session ou la créer si vide
+// =====================================================
+
+async function state.contexte = await getOrCreateSession(
+    utilisateurId
+) {
+
+    const sessions =
+        await lireTable(
+            TABLE_SESSION_UTILISATEUR
+        );
+
+    let session =
+        sessions.find(
+            s =>
+                s.utilisateur_id
+                === utilisateurId
+        );
+
+    if (session) {
+        return session;
+    }
+
+    await grist.docApi.applyUserActions([
+        [
+            "AddRecord",
+            TABLE_SESSION_UTILISATEUR,
+            null,
+            {
+                utilisateur_id:
+                    utilisateurId
+            }
+        ]
+    ]);
+
+    const sessionsMaj =
+        await lireTable(
+            TABLE_SESSION_UTILISATEUR
+        );
+
+    return sessionsMaj.find(
+        s =>
+            s.utilisateur_id
+            === utilisateurId
+    );
 
 }
