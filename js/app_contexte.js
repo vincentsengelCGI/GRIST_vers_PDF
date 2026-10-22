@@ -73,6 +73,7 @@ async function initialiserWidget() {
 
     }
 
+    // 1 - Déclaration du widget auprès de Grist
     grist.ready({
 
         requiredAccess: "full",
@@ -80,25 +81,12 @@ async function initialiserWidget() {
         allowSelectBy: true,
 
         onEditOptions() {
-
-            document
-                .getElementById(
-                    "main-view"
-                )
-                .style.display =
-                "none";
-
-            document
-                .getElementById(
-                    "config-panel"
-                )
-                .style.display =
-                "block";
-
+            ouvrirConfiguration();
         }
 
     });
 
+    // 2 - Chargement éventuel des options
     chargerOptions();
 
     document
@@ -108,6 +96,7 @@ async function initialiserWidget() {
             sauvegarderOptions
         );
 
+    // 3 - Recherche utilisateur actuel
     try {
 
         console.log(
@@ -134,7 +123,7 @@ async function initialiserWidget() {
             ]
         );
 
-        // chargement ou créatoin de la session utilisateur
+    // 4 - chargement ou création de la session utilisateur
         state.contexte = await getOrCreateSession(state.utilisateur);
            
         await chargerContexte();
@@ -595,5 +584,22 @@ async function state.contexte = await getOrCreateSession(
             s.utilisateur_id
             === utilisateurId
     );
+
+}
+
+
+// ---------------------------------------------- 
+// ouvrir panneau de config
+// ---------------------------------------------- 
+
+function ouvrirConfiguration() {
+
+    document.getElementById(
+        "main-view"
+    ).style.display = "none";
+
+    document.getElementById(
+        "config-panel"
+    ).style.display = "block";
 
 }
