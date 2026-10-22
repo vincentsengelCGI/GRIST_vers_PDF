@@ -539,7 +539,7 @@ async function getOrCreateSession(
     let session =
         sessions.find(
             s =>
-                s.utilisateur_id
+                s[COLONNE_CONTEXTE_UTILISATEUR_ID]
                 === utilisateurId
         );
 
@@ -553,7 +553,7 @@ async function getOrCreateSession(
             TABLE_SESSION_UTILISATEUR,
             null,
             {
-                utilisateur_id:
+                [COLONNE_CONTEXTE_UTILISATEUR_ID]:
                     utilisateurId
             }
         ]
@@ -566,7 +566,7 @@ async function getOrCreateSession(
 
     return sessionsMaj.find(
         s =>
-            s.utilisateur_id
+            s[COLONNE_CONTEXTE_UTILISATEUR_ID]
             === utilisateurId
     );
 
