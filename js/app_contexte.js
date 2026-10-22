@@ -124,8 +124,8 @@ async function initialiserWidget() {
         );
 
     // 4 - chargement ou création de la session utilisateur
-        state.contexte = await getOrCreateSession(state.utilisateur);
-           
+        state.contexte = await getOrCreateSession(state.utilisateur.id);
+        
         await chargerContexte();
 
         console.log(
@@ -281,7 +281,7 @@ async function onSelectionRecord(
         }
 
         const contexteActuel =
-            state.utilisateur[
+            state.contexte[
                 COLONNE_CONTEXTE_PKO_ID
             ];
 
@@ -367,21 +367,6 @@ async function mettreAJourContexte(
 ) {
     console.log("update contexte");
 
-    console.log(
-        "UPDATE CONTEXTE",
-        state.utilisateur.id
-    );
-        console.log(
-        TABLE_UTILISATEURS
-    );
-        console.log(
-        COLONNE_CONTEXTE_PKO_ID
-    );
-        console.log(
-        rowId
-    );
-
-
     await grist.docApi.applyUserActions([
             [
                 "UpdateRecord",
@@ -393,12 +378,9 @@ async function mettreAJourContexte(
             ]
         ]);
 
-    console.log(
-        "UDATE STATE UTILISATEUR"
-    );
 
-    state.utilisateur[
-        COLONNE_SESSION_UTILISATEUR_CONTEXTE
+    state.contexte[
+        COLONNE_CONTEXTE_PKO_ID
     ] = rowId;
 
     console.log(
@@ -542,7 +524,7 @@ function tableToRecords(
 //  récupérer session ou la créer si vide
 // =====================================================
 
-async function state.contexte = await getOrCreateSession(
+async function getOrCreateSession(
     utilisateurId
 ) {
 
