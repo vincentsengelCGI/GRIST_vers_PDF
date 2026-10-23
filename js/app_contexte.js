@@ -533,18 +533,18 @@ function tableToRecords(
 async function getOrCreateSession(
     utilisateurId
 ) {
-    const sessions =
+    const contextes =
     await lireTable(
-        TABLE_SESSION_UTILISATEUR
+        TABLE_CONTEXTE_UTILISATEURS
     );
     
-    console.log(sessions);
+    console.log(contextes);
 
     if (utilisateurId) {
 
 
         let session =
-        sessions.find(
+        contextes.find(
             s =>
                 s[COLONNE_CONTEXTE_UTILISATEUR_ID]
             === utilisateurId
@@ -559,7 +559,7 @@ async function getOrCreateSession(
     await grist.docApi.applyUserActions([
         [
             "AddRecord",
-            TABLE_SESSION_UTILISATEUR,
+            TABLE_CONTEXTE_UTILISATEURS,
             null,
             {
                 [COLONNE_CONTEXTE_UTILISATEUR_ID]:
@@ -568,12 +568,12 @@ async function getOrCreateSession(
         ]
     ]);
 
-    const sessionsMaj =
+    const contextesMaj =
         await lireTable(
-            TABLE_SESSION_UTILISATEUR
+            TABLE_CONTEXTE_UTILISATEURS
         );
 
-    return sessionsMaj.find(
+    return contextesMaj.find(
         s =>
             s[COLONNE_CONTEXTE_UTILISATEUR_ID]
             === utilisateurId
