@@ -376,7 +376,7 @@ async function mettreAJourContexte(
                 TABLE_CONTEXTE_UTILISATEURS,
                 state.contexte.id,
                 {
-                    [COLONNE_SESSION_UTILISATEUR_CONTEXTE]: rowId
+                    [COLONNE_CONTEXTE_PKO_ID]: rowId
                 }
             ]
         ]);
