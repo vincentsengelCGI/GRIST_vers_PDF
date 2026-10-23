@@ -34,7 +34,7 @@ let TABLE_SESSION_UTILISATEUR =
 
 const state = {
 
-    utilisateur: null,
+    utilisateur: {id: null},
 
     synchronisationEnCours: false,
 
@@ -124,9 +124,9 @@ async function initialiserWidget() {
         );
 
     // 4 - chargement ou création de la session utilisateur
-    
-        console.log("State : ", state);
 
+        console.log("State : ", state);
+        
         state.contexte = await getOrCreateSession(state.utilisateur.id);
         
         await chargerContexte();
@@ -533,23 +533,29 @@ function tableToRecords(
 async function getOrCreateSession(
     utilisateurId
 ) {
-
     const sessions =
-        await lireTable(
-            TABLE_SESSION_UTILISATEUR
-        );
+    await lireTable(
+        TABLE_SESSION_UTILISATEUR
+    );
+    
+    console.log(sessions);
 
-    let session =
+    if (utilisateurId) {
+
+
+        let session =
         sessions.find(
             s =>
                 s[COLONNE_CONTEXTE_UTILISATEUR_ID]
-                === utilisateurId
+            === utilisateurId
         );
-
-    if (session) {
-        return session;
+        
+        if (session) {
+            return session;
+        }
+    
     }
-
+        
     await grist.docApi.applyUserActions([
         [
             "AddRecord",
